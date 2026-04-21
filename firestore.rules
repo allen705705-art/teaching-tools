@@ -8,6 +8,16 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    // 投票牆：題目設定（任何人可讀寫，老師從頁面控制）
+    match /poll_config/{document} {
+      allow read, write: if true;
+    }
+
+    // 投票牆：學生票數（任何人可讀寫）
+    match /poll_votes/{document} {
+      allow read, write: if true;
+    }
+
     // 其他集合預設禁止存取
     match /{document=**} {
       allow read, write: if false;
