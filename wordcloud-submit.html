@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>請輸入你的關鍵字</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+      padding: 20px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 480px;
+      text-align: center;
+      box-shadow: 0 25px 50px rgba(0,0,0,0.4);
+    }
+
+    .emoji { font-size: 56px; margin-bottom: 16px; }
+
+    h1 {
+      color: #fff;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      color: rgba(255,255,255,0.5);
+      font-size: 15px;
+      margin-bottom: 36px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 18px 20px;
+      font-size: 22px;
+      text-align: center;
+      border: 2px solid rgba(255,255,255,0.15);
+      border-radius: 14px;
+      background: rgba(255,255,255,0.08);
+      color: #fff;
+      outline: none;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 16px;
+      font-family: inherit;
+    }
+
+    input[type="text"]::placeholder { color: rgba(255,255,255,0.3); }
+
+    input[type="text"]:focus {
+      border-color: #e94560;
+      background: rgba(255,255,255,0.12);
+    }
+
+    button {
+      width: 100%;
+      padding: 18px;
+      font-size: 18px;
+      font-weight: 700;
+      font-family: inherit;
+      border: none;
+      border-radius: 14px;
+      background: linear-gradient(135deg, #e94560, #c0392b);
+      color: #fff;
+      cursor: pointer;
+      transition: transform 0.15s, opacity 0.15s, box-shadow 0.15s;
+      box-shadow: 0 8px 24px rgba(233,69,96,0.4);
+    }
+
+    button:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(233,69,96,0.5);
+    }
+
+    button:active:not(:disabled) { transform: translateY(0); }
+
+    button:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .status {
+      margin-top: 24px;
+      font-size: 16px;
+      min-height: 24px;
+      font-weight: 600;
+    }
+
+    .status.success { color: #2ecc71; }
+    .status.error { color: #e74c3c; }
+    .status.loading { color: rgba(255,255,255,0.6); }
+
+    .submitted-word {
+      margin-top: 20px;
+      padding: 16px 24px;
+      background: rgba(46, 204, 113, 0.1);
+      border: 1px solid rgba(46, 204, 113, 0.3);
+      border-radius: 12px;
+      color: #2ecc71;
+      font-size: 15px;
+      display: none;
+    }
+
+    .word-tag {
+      display: inline-block;
+      background: rgba(46, 204, 113, 0.2);
+      border-radius: 8px;
+      padding: 4px 12px;
+      font-size: 20px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .limit-notice {
+      margin-top: 12px;
+      color: rgba(255,255,255,0.3);
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="emoji">💬</div>
+    <h1>輸入你的關鍵字</h1>
+    <p class="subtitle">輸入後會即時顯示在大螢幕上</p>
+
+    <input type="text" id="wordInput" placeholder="在這裡輸入..." maxlength="10" autocomplete="off" />
+    <button id="submitBtn" onclick="submitWord()">送出</button>
+
+    <div class="status" id="status"></div>
+    <div class="submitted-word" id="submittedBox">
+      ✅ 已送出：<br>
+      <span class="word-tag" id="submittedWord"></span>
+    </div>
+    <p class="limit-notice">每人限送一個關鍵字（最多 10 字）</p>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import { getFirestore, collection, addDoc, serverTimestamp }
+      from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAov-9uW6FZQmf41-PPJ4-plvqR-Bu6zg4",
+      authDomain: "teaching-test-5fd1c.firebaseapp.com",
+      projectId: "teaching-test-5fd1c",
+      storageBucket: "teaching-test-5fd1c.firebasestorage.app",
+      messagingSenderId: "404776287999",
+      appId: "1:404776287999:web:6b14120c71c8962fe396ca"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // 防止重複送出
+    const STORAGE_KEY = 'wordcloud_submitted';
+
+    function checkAlreadySubmitted() {
+      const submitted = sessionStorage.getItem(STORAGE_KEY);
+      if (submitted) {
+        document.getElementById('submitBtn').disabled = true;
+        document.getElementById('wordInput').disabled = true;
+        document.getElementById('submittedBox').style.display = 'block';
+        document.getElementById('submittedWord').textContent = submitted;
+        document.getElementById('status').textContent = '你已經送出過了！';
+        document.getElementById('status').className = 'status success';
+      }
+    }
+
+    window.submitWord = async function () {
+      const input = document.getElementById('wordInput');
+      const btn = document.getElementById('submitBtn');
+      const status = document.getElementById('status');
+      const word = input.value.trim();
+
+      if (!word) {
+        status.textContent = '請輸入關鍵字！';
+        status.className = 'status error';
+        return;
+      }
+
+      btn.disabled = true;
+      status.textContent = '送出中…';
+      status.className = 'status loading';
+
+      try {
+        await addDoc(collection(db, 'wordcloud_words'), {
+          word: word,
+          timestamp: serverTimestamp()
+        });
+
+        sessionStorage.setItem(STORAGE_KEY, word);
+        input.disabled = true;
+        status.textContent = '送出成功！';
+        status.className = 'status success';
+        document.getElementById('submittedBox').style.display = 'block';
+        document.getElementById('submittedWord').textContent = word;
+      } catch (err) {
+        console.error(err);
+        status.textContent = '送出失敗，請重試';
+        status.className = 'status error';
+        btn.disabled = false;
+      }
+    };
+
+    // Enter 鍵送出
+    document.getElementById('wordInput').addEventListener('keydown', e => {
+      if (e.key === 'Enter') window.submitWord();
+    });
+
+    checkAlreadySubmitted();
+  </script>
+</body>
+</html>

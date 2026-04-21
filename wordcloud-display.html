@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>即時文字雲</title>
+  <script src="https://cdn.jsdelivr.net/npm/wordcloud@1.2.2/src/wordcloud2.js"></script>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0d1117;
+      color: #fff;
+      font-family: 'Noto Sans TC', 'Microsoft JhengHei', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 28px;
+      background: rgba(255,255,255,0.04);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+
+    .title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: 2px;
+    }
+
+    .title span { color: #e94560; }
+
+    .stats {
+      display: flex;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .stat-item {
+      text-align: center;
+    }
+
+    .stat-num {
+      font-size: 24px;
+      font-weight: 700;
+      color: #e94560;
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 11px;
+      color: rgba(255,255,255,0.4);
+      margin-top: 2px;
+    }
+
+    .indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.4);
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #2ecc71;
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.8); }
+    }
+
+    #canvas-wrapper {
+      flex: 1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #wordcloudCanvas {
+      display: block;
+    }
+
+    #empty-hint {
+      position: absolute;
+      text-align: center;
+      color: rgba(255,255,255,0.2);
+      pointer-events: none;
+    }
+
+    #empty-hint .icon { font-size: 64px; margin-bottom: 16px; }
+    #empty-hint p { font-size: 20px; }
+
+    footer {
+      padding: 10px 28px;
+      background: rgba(255,255,255,0.03);
+      border-top: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .qr-hint {
+      font-size: 13px;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .clear-btn {
+      background: rgba(231,76,60,0.15);
+      border: 1px solid rgba(231,76,60,0.3);
+      color: rgba(231,76,60,0.7);
+      padding: 6px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .clear-btn:hover {
+      background: rgba(231,76,60,0.25);
+      color: #e74c3c;
+    }
+
+    /* 詞彙清單側邊欄 */
+    .sidebar {
+      position: fixed;
+      right: 0;
+      top: 60px;
+      bottom: 48px;
+      width: 200px;
+      background: rgba(255,255,255,0.03);
+      border-left: 1px solid rgba(255,255,255,0.06);
+      overflow-y: auto;
+      padding: 12px;
+      transform: translateX(100%);
+      transition: transform 0.3s;
+    }
+
+    .sidebar.open { transform: translateX(0); }
+
+    .sidebar h3 {
+      font-size: 12px;
+      color: rgba(255,255,255,0.3);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .word-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 8px;
+      border-radius: 6px;
+      margin-bottom: 4px;
+      font-size: 14px;
+      background: rgba(255,255,255,0.04);
+    }
+
+    .word-item .count {
+      background: #e94560;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    .toggle-sidebar-btn {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.5);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+    }
+
+    .toggle-sidebar-btn:hover { background: rgba(255,255,255,0.14); color: #fff; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="title">⚡ 即時<span>文字雲</span></div>
+  <div class="stats">
+    <div class="stat-item">
+      <div class="stat-num" id="totalCount">0</div>
+      <div class="stat-label">總送出數</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num" id="uniqueCount">0</div>
+      <div class="stat-label">不重複關鍵字</div>
+    </div>
+    <div class="indicator">
+      <div class="dot"></div>
+      即時更新中
+    </div>
+  </div>
+</header>
+
+<div id="canvas-wrapper">
+  <canvas id="wordcloudCanvas"></canvas>
+  <div id="empty-hint">
+    <div class="icon">☁️</div>
+    <p>等待學生送出關鍵字…</p>
+  </div>
+</div>
+
+<footer>
+  <span class="qr-hint" id="urlHint">學生投稿頁：wordcloud-submit.html</span>
+  <div style="display:flex;gap:10px;">
+    <button class="toggle-sidebar-btn" onclick="toggleSidebar()">📋 詞彙清單</button>
+    <button class="clear-btn" onclick="confirmClear()">🗑️ 清除所有資料</button>
+  </div>
+</footer>
+
+<!-- 詞彙側邊欄 -->
+<div class="sidebar" id="sidebar">
+  <h3>關鍵字排行</h3>
+  <div id="wordList"></div>
+</div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getFirestore, collection, onSnapshot, getDocs, deleteDoc, doc }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyAov-9uW6FZQmf41-PPJ4-plvqR-Bu6zg4",
+    authDomain: "teaching-test-5fd1c.firebaseapp.com",
+    projectId: "teaching-test-5fd1c",
+    storageBucket: "teaching-test-5fd1c.firebasestorage.app",
+    messagingSenderId: "404776287999",
+    appId: "1:404776287999:web:6b14120c71c8962fe396ca"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const canvas = document.getElementById('wordcloudCanvas');
+  const wrapper = document.getElementById('canvas-wrapper');
+  const emptyHint = document.getElementById('empty-hint');
+
+  // 顏色陣列（活潑的漸層色系）
+  const COLORS = [
+    '#e94560', '#f39c12', '#2ecc71', '#3498db',
+    '#9b59b6', '#1abc9c', '#e67e22', '#e91e63',
+    '#00bcd4', '#ff5722', '#8bc34a', '#ff9800'
+  ];
+
+  let renderTimer = null;
+
+  function resizeCanvas() {
+    canvas.width = wrapper.clientWidth;
+    canvas.height = wrapper.clientHeight;
+  }
+
+  function renderWordCloud(wordMap) {
+    const words = Object.entries(wordMap)
+      .sort((a, b) => b[1] - a[1]);
+
+    if (words.length === 0) {
+      emptyHint.style.display = 'block';
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      return;
+    }
+
+    emptyHint.style.display = 'none';
+
+    // 計算字體大小範圍
+    const maxCount = words[0][1];
+    const minCount = words[words.length - 1][1];
+    const maxFont = Math.min(120, Math.max(60, canvas.width / 8));
+    const minFont = Math.max(20, maxFont / 5);
+
+    const list = words.map(([word, count], i) => {
+      const ratio = maxCount === minCount ? 1 : (count - minCount) / (maxCount - minCount);
+      const size = Math.round(minFont + ratio * (maxFont - minFont));
+      return [word, size];
+    });
+
+    WordCloud(canvas, {
+      list,
+      gridSize: Math.round(canvas.width / 60),
+      weightFactor: 1,
+      fontFamily: "'Noto Sans TC', 'Microsoft JhengHei', sans-serif",
+      color: () => COLORS[Math.floor(Math.random() * COLORS.length)],
+      backgroundColor: 'transparent',
+      rotateRatio: 0.3,
+      rotationSteps: 2,
+      shuffle: true,
+      drawOutOfBound: false,
+      minSize: 14,
+    });
+
+    // 更新詞彙清單
+    const listEl = document.getElementById('wordList');
+    listEl.innerHTML = words.slice(0, 30).map(([word, count]) =>
+      `<div class="word-item"><span>${word}</span><span class="count">${count}</span></div>`
+    ).join('');
+  }
+
+  function debounceRender(wordMap) {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(() => renderWordCloud(wordMap), 300);
+  }
+
+  // 即時監聽 Firestore
+  onSnapshot(collection(db, 'wordcloud_words'), (snapshot) => {
+    const wordMap = {};
+    snapshot.forEach(doc => {
+      const word = (doc.data().word || '').trim();
+      if (word) wordMap[word] = (wordMap[word] || 0) + 1;
+    });
+
+    document.getElementById('totalCount').textContent = snapshot.size;
+    document.getElementById('uniqueCount').textContent = Object.keys(wordMap).length;
+    debounceRender(wordMap);
+  });
+
+  // 視窗縮放時重新繪製
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      resizeCanvas();
+      // 強制重繪：觸發下一次 snapshot
+    }, 300);
+  });
+
+  resizeCanvas();
+
+  // 清除所有資料
+  window.confirmClear = async function() {
+    if (!confirm('確定要清除所有關鍵字嗎？此操作無法復原。')) return;
+    const snap = await getDocs(collection(db, 'wordcloud_words'));
+    const deletes = snap.docs.map(d => deleteDoc(doc(db, 'wordcloud_words', d.id)));
+    await Promise.all(deletes);
+    alert('已清除所有資料！');
+  };
+
+  // 側邊欄切換
+  window.toggleSidebar = function() {
+    document.getElementById('sidebar').classList.toggle('open');
+  };
+</script>
+</body>
+</html>
