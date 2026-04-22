@@ -18,6 +18,12 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    // 座位志願填選：任何人可讀；座號 1–36 的文件可寫
+    match /seat_preferences/{studentId} {
+      allow read: if true;
+      allow write: if int(studentId) >= 1 && int(studentId) <= 36;
+    }
+
     // 其他集合預設禁止存取
     match /{document=**} {
       allow read, write: if false;
