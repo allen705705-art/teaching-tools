@@ -35,6 +35,11 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
+    // 小組貢獻度評量：1663班（任何人可讀寫）
+    match /groupContrib_163/{seatNo} {
+      allow read, write: if true;
+    }
+
     // 其他集合預設禁止存取
     match /{document=**} {
       allow read, write: if false;

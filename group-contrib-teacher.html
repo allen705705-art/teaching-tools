@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>小組貢獻度分析｜163班教師後台</title>
+<title>小組貢獻度分析｜1663班教師後台</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -91,7 +91,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 
 <header>
   <div class="logo">📋</div>
-  <h1>小組貢獻度分析｜163班教師後台</h1>
+  <h1>小組貢獻度分析｜1663班教師後台</h1>
   <span style="font-size:12px;color:var(--muted)"><span class="live-dot"></span>即時同步</span>
   <button class="btn btn-outline" onclick="exportCSV()">⬇ 匯出 CSV</button>
 </header>
@@ -424,7 +424,7 @@ window.exportCSV = function(){
   const csv = '\uFEFF'+[headers,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\r\n');
   const a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download = '163班小組貢獻度.csv';
+  a.download = '1663班小組貢獻度.csv';
   a.click();
 };
 </script>
