@@ -80,6 +80,21 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 .btn{padding:9px 18px;border-radius:9px;border:none;font-size:13px;font-family:inherit;cursor:pointer;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:6px}
 .btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
 .btn-green{background:var(--green);color:#fff}.btn-green:hover{filter:brightness(.9)}
+.btn-red{background:rgba(248,81,73,0.12);border:1px solid rgba(248,81,73,0.35);color:var(--red)}.btn-red:hover{background:rgba(248,81,73,0.22)}
+
+/* modal */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:28px;max-width:380px;width:100%;text-align:center}
+.modal-icon{font-size:40px;margin-bottom:14px}
+.modal-title{font-size:18px;font-weight:900;margin-bottom:8px}
+.modal-desc{font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:22px}
+.modal-btns{display:flex;gap:10px}
+
+/* 工具列 */
+.toolbar{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px 20px;margin-bottom:24px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.toolbar-label{font-size:12px;color:var(--muted);font-weight:700;white-space:nowrap}
+.toolbar input{flex:1;min-width:180px;background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 12px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:.2s}
+.toolbar input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.10)}
 
 .live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px;animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
@@ -94,9 +109,29 @@ tr:hover td{background:rgba(255,255,255,0.02)}
   <h1>小組貢獻度分析｜1663班教師後台</h1>
   <span style="font-size:12px;color:var(--muted)"><span class="live-dot"></span>即時同步</span>
   <button class="btn btn-outline" onclick="exportCSV()">⬇ 匯出 CSV</button>
+  <button class="btn btn-red" onclick="confirmClear()">🗑 清除所有回報</button>
 </header>
 
+<!-- 確認清除 Modal -->
+<div class="modal-bg" id="clear-modal" style="display:none">
+  <div class="modal">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">確定清除所有資料？</div>
+    <div class="modal-desc">此操作將刪除全班已提交的評量資料，<strong>無法復原</strong>。<br>清除後學生可重新填寫。</div>
+    <div class="modal-btns">
+      <button class="btn btn-outline" style="flex:1" onclick="closeClear()">取消</button>
+      <button class="btn btn-red" style="flex:1" onclick="clearAllData()">確認清除</button>
+    </div>
+  </div>
+</div>
+
 <div class="container">
+  <!-- 工具列：回饋名稱 -->
+  <div class="toolbar">
+    <span class="toolbar-label">回饋名稱</span>
+    <input id="feedback-name" type="text" placeholder="例：114-2 第一次實驗小組評量" oninput="saveFeedbackName()">
+  </div>
+
   <!-- 統計卡片 -->
   <div class="stats-row">
     <div class="stat-card">
@@ -169,7 +204,7 @@ tr:hover td{background:rgba(255,255,255,0.02)}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot }
+import { getFirestore, collection, onSnapshot, getDocs, deleteDoc, doc, setDoc, getDoc }
   from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -212,7 +247,7 @@ window._allData = allData; // for CSV export
 
 onSnapshot(collection(db, COLL), snap=>{
   allData = {};
-  snap.forEach(d=>{ allData[d.id]=d.data(); });
+  snap.forEach(d=>{ if(d.id !== '__config__') allData[d.id]=d.data(); });
   window._allData = allData;
   render();
 });
@@ -406,13 +441,14 @@ function render(){
 /* ─────────── CSV EXPORT ─────────── */
 window.exportCSV = function(){
   const {stats} = computeStats();
-  const headers = ['座號','姓名','組別','自評平均','他評平均','綜合貢獻度','組平均','自評偏差','狀態'];
+  const feedbackName = document.getElementById('feedback-name').value.trim() || '1663班小組貢獻度';
+  const headers = ['回饋名稱','座號','姓名','組別','自評平均','他評平均','綜合貢獻度','組平均','自評偏差','狀態'];
   const rows = Object.entries(STUDENTS).map(([no,name])=>{
     const s = stats[no];
-    if(!s.submitted) return [no,name,s.group,'','','','','','未提交'];
+    if(!s.submitted) return [feedbackName,no,name,s.group,'','','','','','未提交'];
     const status = s.combined>=4?'優秀':s.combined>=3?'良好':s.combined>=2?'普通':'需關注';
     return [
-      no, name, s.group,
+      feedbackName, no, name, s.group,
       s.selfAvg!==null?s.selfAvg.toFixed(2):'',
       s.peerAvg!==null?s.peerAvg.toFixed(2):'',
       s.combined!==null?s.combined.toFixed(2):'',
@@ -424,8 +460,48 @@ window.exportCSV = function(){
   const csv = '\uFEFF'+[headers,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\r\n');
   const a = document.createElement('a');
   a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
-  a.download = '1663班小組貢獻度.csv';
+  a.download = `${feedbackName}.csv`;
   a.click();
+};
+
+/* ─────────── 回饋名稱 ─────────── */
+const CONFIG_DOC = '__config__';
+let saveTimer = null;
+
+// 載入已儲存的名稱
+getDoc(doc(db, COLL, CONFIG_DOC)).then(snap=>{
+  if(snap.exists() && snap.data().feedbackName){
+    document.getElementById('feedback-name').value = snap.data().feedbackName;
+  }
+});
+
+window.saveFeedbackName = function(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    const name = document.getElementById('feedback-name').value.trim();
+    await setDoc(doc(db, COLL, CONFIG_DOC), { feedbackName: name }, { merge: true });
+  }, 800);
+};
+
+/* ─────────── 清除所有資料 ─────────── */
+window.confirmClear = function(){ document.getElementById('clear-modal').style.display='flex'; };
+window.closeClear   = function(){ document.getElementById('clear-modal').style.display='none'; };
+
+window.clearAllData = async function(){
+  const btn = document.querySelector('#clear-modal .btn-red');
+  btn.textContent='刪除中…'; btn.disabled=true;
+  try{
+    const snap = await getDocs(collection(db, COLL));
+    const dels = snap.docs
+      .filter(d=>d.id !== CONFIG_DOC)
+      .map(d=>deleteDoc(doc(db, COLL, d.id)));
+    await Promise.all(dels);
+    closeClear();
+  } catch(e){
+    alert('清除失敗：'+e.message);
+  } finally{
+    btn.textContent='確認清除'; btn.disabled=false;
+  }
 };
 </script>
 </body>
