@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小組貢獻度分析｜163班教師後台</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --border:rgba(255,255,255,0.10);
+  --text:#e6edf3;--muted:#8b949e;
+  --accent:#58a6ff;--green:#3fb950;--orange:#f0883e;--red:#f85149;--purple:#bc8cff;--yellow:#e3b341;
+}
+body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;font-size:14px}
+header{padding:14px 24px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;background:linear-gradient(135deg,#f0883e,#f85149);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+header h1{font-size:17px;font-weight:700;flex:1}
+.container{max-width:1100px;margin:0 auto;padding:28px 18px 60px}
+
+/* stat cards */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+@media(max-width:700px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:18px 20px}
+.stat-label{font-size:11px;color:var(--muted);font-weight:700;letter-spacing:.5px;margin-bottom:6px;text-transform:uppercase}
+.stat-value{font-size:28px;font-weight:900}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:3px}
+
+/* section */
+.section{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:24px;overflow:hidden}
+.section-head{padding:16px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.section-title{font-size:14px;font-weight:700}
+.section-body{padding:0}
+
+/* table */
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;font-weight:700;color:var(--muted);padding:10px 14px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;letter-spacing:.3px}
+td{padding:10px 14px;border-bottom:1px solid rgba(255,255,255,0.05);font-size:13px;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(255,255,255,0.02)}
+
+/* badges */
+.badge{display:inline-block;padding:2px 8px;border-radius:6px;font-size:11px;font-weight:700}
+.badge-red{background:rgba(248,81,73,0.15);color:var(--red);border:1px solid rgba(248,81,73,0.3)}
+.badge-orange{background:rgba(240,136,62,0.15);color:var(--orange);border:1px solid rgba(240,136,62,0.3)}
+.badge-yellow{background:rgba(227,179,65,0.15);color:var(--yellow);border:1px solid rgba(227,179,65,0.3)}
+.badge-green{background:rgba(63,185,80,0.15);color:var(--green);border:1px solid rgba(63,185,80,0.3)}
+.badge-blue{background:rgba(88,166,255,0.15);color:var(--accent);border:1px solid rgba(88,166,255,0.3)}
+.badge-muted{background:rgba(139,148,158,0.15);color:var(--muted);border:1px solid rgba(139,148,158,0.3)}
+
+/* score bar */
+.bar-wrap{display:flex;align-items:center;gap:8px}
+.bar-bg{flex:1;height:6px;background:var(--bg3);border-radius:3px;overflow:hidden;min-width:60px}
+.bar-fill{height:100%;border-radius:3px;transition:.4s}
+.bar-num{min-width:28px;font-size:12px;font-weight:700;text-align:right}
+
+/* anomaly list */
+.anom-item{padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:flex-start;gap:12px}
+.anom-item:last-child{border-bottom:none}
+.anom-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.anom-body{flex:1}
+.anom-name{font-weight:700;font-size:14px}
+.anom-desc{color:var(--muted);font-size:12px;margin-top:2px;line-height:1.5}
+
+/* pending list */
+.pending-grid{display:flex;flex-wrap:wrap;gap:8px;padding:16px 20px}
+.pending-chip{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.chip-done{background:rgba(63,185,80,0.12);border:1px solid rgba(63,185,80,0.3);color:var(--green)}
+.chip-wait{background:rgba(248,81,73,0.10);border:1px solid rgba(248,81,73,0.25);color:var(--red)}
+
+/* group cards */
+.group-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;padding:16px 20px}
+.group-card{background:var(--bg3);border:1px solid var(--border);border-radius:11px;padding:14px 16px}
+.group-card-title{font-weight:700;font-size:14px;margin-bottom:10px;color:var(--accent)}
+.group-member{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;font-size:12px}
+.group-avg-row{border-top:1px solid var(--border);padding-top:8px;margin-top:8px;font-size:12px;font-weight:700;color:var(--yellow);display:flex;justify-content:space-between}
+
+/* btn */
+.btn{padding:9px 18px;border-radius:9px;border:none;font-size:13px;font-family:inherit;cursor:pointer;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-outline{background:transparent;border:1px solid var(--border);color:var(--text)}.btn-outline:hover{border-color:var(--accent);color:var(--accent)}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{filter:brightness(.9)}
+
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;margin-right:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+.empty-msg{padding:32px;text-align:center;color:var(--muted);font-size:13px}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📋</div>
+  <h1>小組貢獻度分析｜163班教師後台</h1>
+  <span style="font-size:12px;color:var(--muted)"><span class="live-dot"></span>即時同步</span>
+  <button class="btn btn-outline" onclick="exportCSV()">⬇ 匯出 CSV</button>
+</header>
+
+<div class="container">
+  <!-- 統計卡片 -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-label">已提交</div>
+      <div class="stat-value" id="s-submitted" style="color:var(--green)">0</div>
+      <div class="stat-sub">/ 29 位學生</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">全班平均貢獻度</div>
+      <div class="stat-value" id="s-avg" style="color:var(--accent)">—</div>
+      <div class="stat-sub">綜合（自評30% + 他評70%）</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">需關注人數</div>
+      <div class="stat-value" id="s-alert" style="color:var(--orange)">—</div>
+      <div class="stat-sub">異常警示觸發</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">最高自評偏差</div>
+      <div class="stat-value" id="s-bias" style="color:var(--yellow)">—</div>
+      <div class="stat-sub">自評 − 他評（高估指標）</div>
+    </div>
+  </div>
+
+  <!-- 填寫進度 -->
+  <div class="section" style="margin-bottom:24px">
+    <div class="section-head">
+      <span class="section-title">📥 填寫進度</span>
+      <span id="progress-label" style="font-size:12px;color:var(--muted)"></span>
+    </div>
+    <div class="pending-grid" id="pending-grid">
+      <div class="empty-msg">等待學生提交…</div>
+    </div>
+  </div>
+
+  <!-- 異常警示 -->
+  <div class="section" style="margin-bottom:24px">
+    <div class="section-head"><span class="section-title">⚠️ 異常警示</span></div>
+    <div id="anom-list"><div class="empty-msg">目前無異常（資料不足時不顯示）</div></div>
+  </div>
+
+  <!-- 各組總覽 -->
+  <div class="section" style="margin-bottom:24px">
+    <div class="section-head"><span class="section-title">👥 各組總覽</span></div>
+    <div class="group-grid" id="group-grid"></div>
+  </div>
+
+  <!-- 個人明細 -->
+  <div class="section">
+    <div class="section-head">
+      <span class="section-title">📊 個人明細表</span>
+      <span style="font-size:11px;color:var(--muted)">點擊欄位排序</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="main-table">
+        <thead>
+          <tr>
+            <th>座號</th><th>姓名</th><th>組別</th>
+            <th>自評平均</th><th>他評平均</th><th>綜合貢獻度</th>
+            <th>組平均</th><th>自評偏差</th><th>狀態</th><th>警示</th>
+          </tr>
+        </thead>
+        <tbody id="main-tbody">
+          <tr><td colspan="10" class="empty-msg">等待資料…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, onSnapshot }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAov-9uW6FZQmf41-PPJ4-plvqR-Bu6zg4",
+  authDomain: "teaching-test-5fd1c.firebaseapp.com",
+  projectId: "teaching-test-5fd1c",
+  storageBucket: "teaching-test-5fd1c.firebasestorage.app",
+  messagingSenderId: "404776287999",
+  appId: "1:404776787999:web:6b14120c71c8962fe396ca"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const COLL = 'groupContrib_163';
+
+const STUDENTS = {
+  '01':'杜羽喬','02':'林奕澄','03':'王訢楷','04':'吳冠辰','05':'吳紹瑜',
+  '06':'吳紹齊','07':'呂丞立','08':'李世弘','09':'李秉翰','10':'李宥叡',
+  '11':'沈湧智','12':'林宜勳','13':'林冠頤','14':'林威廷','15':'林楷哲',
+  '16':'倪紹恩','17':'張崇毅','18':'陳定渝','19':'陳彥旭','20':'陳禹淮',
+  '21':'黃彥瑋','22':'黃致樸','23':'楊硯博','24':'楊閎宇','25':'廖梓淞',
+  '26':'劉紘綱','27':'蕭泓胤','28':'鍾孟栩','29':'鍾尚廷'
+};
+const GROUPS = {
+  '第一組':['01','14','19','27'],
+  '第二組':['02','06','08','12'],
+  '第三組':['03','17','21','28'],
+  '第四組':['04','07','11','26'],
+  '第五組':['05','15','22','29'],
+  '第六組':['09','10','18','23'],
+  '第七組':['13','16','20','24','25']
+};
+const TOTAL = Object.keys(STUDENTS).length;
+
+// seatNo → groupName
+const SEAT_GROUP = {};
+Object.entries(GROUPS).forEach(([g,members])=>members.forEach(s=>SEAT_GROUP[s]=g));
+
+let allData = {}; // seatNo → Firestore doc data
+window._allData = allData; // for CSV export
+
+onSnapshot(collection(db, COLL), snap=>{
+  allData = {};
+  snap.forEach(d=>{ allData[d.id]=d.data(); });
+  window._allData = allData;
+  render();
+});
+
+/* ─────────── COMPUTE ─────────── */
+function avg(vals){ return vals.length ? vals.reduce((a,b)=>a+b,0)/vals.length : null; }
+function std(vals){
+  if(vals.length<2) return 0;
+  const m=avg(vals);
+  return Math.sqrt(vals.reduce((a,v)=>a+(v-m)**2,0)/vals.length);
+}
+
+function computeStats(){
+  const stats = {}; // seatNo → stats
+  const Q = 6;
+
+  // self avg
+  Object.entries(STUDENTS).forEach(([no])=>{
+    const doc = allData[no];
+    if(!doc){ stats[no]={submitted:false,selfAvg:null,peerScores:[],peerAvg:null,combined:null,selfBias:null,group:SEAT_GROUP[no]}; return; }
+    const selfVals = Object.values(doc.self||{}).map(Number);
+    stats[no]={submitted:true, selfAvg:avg(selfVals), peerScores:[], peerAvg:null, combined:null, selfBias:null, group:SEAT_GROUP[no]};
+  });
+
+  // collect peer scores given TO each person
+  Object.entries(allData).forEach(([rater, doc])=>{
+    if(!doc.peers) return;
+    Object.entries(doc.peers).forEach(([ratee, qs])=>{
+      if(!stats[ratee]) return;
+      const vals = Object.values(qs).map(Number).filter(v=>v>0);
+      stats[ratee].peerScores.push(...vals);
+    });
+  });
+
+  // compute peerAvg, combined, bias
+  Object.values(stats).forEach(s=>{
+    if(!s.submitted) return;
+    s.peerAvg = s.peerScores.length ? avg(s.peerScores) : null;
+    const pa = s.peerAvg !== null ? s.peerAvg : s.selfAvg;
+    s.combined = s.selfAvg !== null ? s.selfAvg*0.3 + pa*0.7 : null;
+    s.selfBias = (s.selfAvg!==null && s.peerAvg!==null) ? s.selfAvg - s.peerAvg : null;
+    // peer consistency (std of peer scores given to this person per-rater-avg)
+    s.peerStd = std(s.peerScores);
+  });
+
+  // group averages
+  const groupAvg = {};
+  Object.entries(GROUPS).forEach(([g, members])=>{
+    const vals = members.map(m=>stats[m]?.combined).filter(v=>v!==null&&v!==undefined);
+    groupAvg[g] = vals.length ? avg(vals) : null;
+  });
+  Object.values(stats).forEach(s=>{ s.groupAvg = groupAvg[s.group]; });
+
+  return {stats, groupAvg};
+}
+
+/* ─────────── ANOMALIES ─────────── */
+function getAnomalies(stats){
+  const anoms=[];
+  Object.entries(stats).forEach(([no,s])=>{
+    if(!s.submitted){ anoms.push({no,icon:'⚫',type:'尚未提交',desc:'截止前尚未填寫評量',severity:'muted'}); return; }
+    if(s.combined!==null && s.combined<2.0)
+      anoms.push({no,icon:'🔴',type:'嚴重低貢獻',desc:`綜合貢獻度 ${s.combined.toFixed(2)}（低於 2.0）`,severity:'red'});
+    if(s.peerAvg!==null && s.groupAvg!==null && s.peerAvg < s.groupAvg-0.8)
+      anoms.push({no,icon:'🟠',type:'同儕低評',desc:`他評平均 ${s.peerAvg.toFixed(2)}，低於組平均 ${(s.groupAvg).toFixed(2)} 超過 0.8`,severity:'orange'});
+    if(s.selfBias!==null && s.selfBias>1.5)
+      anoms.push({no,icon:'🟡',type:'自評偏高',desc:`自評偏差 +${s.selfBias.toFixed(2)}（自評比他評高出許多）`,severity:'yellow'});
+    if(s.selfBias!==null && s.selfBias<-1.5)
+      anoms.push({no,icon:'🟡',type:'自評偏低',desc:`自評偏差 ${s.selfBias.toFixed(2)}（自評比他評低出許多）`,severity:'yellow'});
+    if(s.peerStd>1.2 && s.peerScores.length>=6)
+      anoms.push({no,icon:'⚪',type:'評分一致性低',desc:`同儕評分標準差 ${s.peerStd.toFixed(2)}（組員對此人看法分歧）`,severity:'muted'});
+  });
+  return anoms;
+}
+
+/* ─────────── RENDER ─────────── */
+function scoreColor(v){
+  if(v===null||v===undefined) return '#8b949e';
+  if(v>=4.2) return '#58a6ff';
+  if(v>=3.5) return '#3fb950';
+  if(v>=2.5) return '#e3b341';
+  if(v>=2.0) return '#f0883e';
+  return '#f85149';
+}
+
+function barHTML(val, max=5){
+  if(val===null||val===undefined) return '<span style="color:var(--muted)">—</span>';
+  const pct=Math.round(val/max*100);
+  const c=scoreColor(val);
+  return `<div class="bar-wrap">
+    <div class="bar-bg"><div class="bar-fill" style="width:${pct}%;background:${c}"></div></div>
+    <div class="bar-num" style="color:${c}">${val.toFixed(2)}</div>
+  </div>`;
+}
+
+function biasHTML(v){
+  if(v===null||v===undefined) return '<span style="color:var(--muted)">—</span>';
+  const sign=v>0?'+':'';
+  const color=Math.abs(v)>1.5?'var(--orange)':(Math.abs(v)>0.8?'var(--yellow)':'var(--muted)');
+  return `<span style="color:${color};font-weight:700">${sign}${v.toFixed(2)}</span>`;
+}
+
+function render(){
+  const {stats, groupAvg} = computeStats();
+  const submitted = Object.values(stats).filter(s=>s.submitted).length;
+  const anoms = getAnomalies(stats).filter(a=>a.severity!=='muted'); // exclude pending for count
+
+  // stat cards
+  document.getElementById('s-submitted').textContent = submitted;
+  const allCombined = Object.values(stats).map(s=>s.combined).filter(v=>v!==null);
+  document.getElementById('s-avg').textContent = allCombined.length ? avg(allCombined).toFixed(2) : '—';
+  document.getElementById('s-alert').textContent = anoms.length || '0';
+  const biases = Object.values(stats).map(s=>s.selfBias).filter(v=>v!==null);
+  document.getElementById('s-bias').textContent = biases.length ? Math.max(...biases).toFixed(2) : '—';
+
+  // progress
+  const pgrid = document.getElementById('pending-grid');
+  document.getElementById('progress-label').textContent = `${submitted} / ${TOTAL} 已提交`;
+  pgrid.innerHTML = Object.entries(STUDENTS).map(([no,name])=>{
+    const done = !!allData[no];
+    return `<span class="pending-chip ${done?'chip-done':'chip-wait'}">${done?'✓':'○'} ${no} ${name}</span>`;
+  }).join('');
+
+  // anomalies
+  const allAnoms = getAnomalies(stats);
+  const anomEl = document.getElementById('anom-list');
+  if(allAnoms.length===0){
+    anomEl.innerHTML='<div class="empty-msg">目前無異常</div>';
+  } else {
+    anomEl.innerHTML = allAnoms.map(a=>`
+      <div class="anom-item">
+        <div class="anom-icon">${a.icon}</div>
+        <div class="anom-body">
+          <div class="anom-name">${a.no} 號 ${STUDENTS[a.no]} <span class="badge badge-${a.severity}">${a.type}</span></div>
+          <div class="anom-desc">${a.desc}</div>
+        </div>
+      </div>`).join('');
+  }
+
+  // group grid
+  const ggrid = document.getElementById('group-grid');
+  ggrid.innerHTML = Object.entries(GROUPS).map(([g,members])=>{
+    const ga = groupAvg[g];
+    const membersHTML = members.map(no=>{
+      const s = stats[no];
+      const c = s?.combined;
+      return `<div class="group-member">
+        <span>${no} ${STUDENTS[no]}</span>
+        <span style="color:${scoreColor(c)};font-weight:700">${c!==null&&c!==undefined?c.toFixed(2):'未提交'}</span>
+      </div>`;
+    }).join('');
+    return `<div class="group-card">
+      <div class="group-card-title">${g}</div>
+      ${membersHTML}
+      <div class="group-avg-row">
+        <span>組平均</span>
+        <span>${ga!==null&&ga!==undefined?ga.toFixed(2):'—'}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // main table
+  const tbody = document.getElementById('main-tbody');
+  const rows = Object.entries(STUDENTS).map(([no,name])=>{
+    const s = stats[no];
+    if(!s.submitted) return `<tr>
+      <td>${no}</td><td>${name}</td><td>${s.group}</td>
+      <td colspan="6" style="color:var(--muted)">尚未提交</td>
+      <td><span class="badge badge-muted">未提交</span></td>
+    </tr>`;
+    const anomBadges = getAnomalies(stats).filter(a=>a.no===no&&a.severity!=='muted')
+      .map(a=>`<span class="badge badge-${a.severity}" style="margin-right:3px">${a.type}</span>`).join('');
+    const statusBadge = s.combined>=4?'<span class="badge badge-blue">優秀</span>':
+      s.combined>=3?'<span class="badge badge-green">良好</span>':
+      s.combined>=2?'<span class="badge badge-yellow">普通</span>':
+      '<span class="badge badge-red">需關注</span>';
+    return `<tr>
+      <td>${no}</td><td>${name}</td><td>${s.group}</td>
+      <td>${barHTML(s.selfAvg)}</td>
+      <td>${barHTML(s.peerAvg)}</td>
+      <td>${barHTML(s.combined)}</td>
+      <td>${barHTML(s.groupAvg)}</td>
+      <td>${biasHTML(s.selfBias)}</td>
+      <td>${statusBadge}</td>
+      <td>${anomBadges||'<span style="color:var(--muted)">—</span>'}</td>
+    </tr>`;
+  });
+  tbody.innerHTML = rows.join('');
+}
+
+/* ─────────── CSV EXPORT ─────────── */
+window.exportCSV = function(){
+  const {stats} = computeStats();
+  const headers = ['座號','姓名','組別','自評平均','他評平均','綜合貢獻度','組平均','自評偏差','狀態'];
+  const rows = Object.entries(STUDENTS).map(([no,name])=>{
+    const s = stats[no];
+    if(!s.submitted) return [no,name,s.group,'','','','','','未提交'];
+    const status = s.combined>=4?'優秀':s.combined>=3?'良好':s.combined>=2?'普通':'需關注';
+    return [
+      no, name, s.group,
+      s.selfAvg!==null?s.selfAvg.toFixed(2):'',
+      s.peerAvg!==null?s.peerAvg.toFixed(2):'',
+      s.combined!==null?s.combined.toFixed(2):'',
+      s.groupAvg!==null?s.groupAvg.toFixed(2):'',
+      s.selfBias!==null?s.selfBias.toFixed(2):'',
+      status
+    ];
+  });
+  const csv = '\uFEFF'+[headers,...rows].map(r=>r.map(v=>`"${v}"`).join(',')).join('\r\n');
+  const a = document.createElement('a');
+  a.href = 'data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download = '163班小組貢獻度.csv';
+  a.click();
+};
+</script>
+</body>
+</html>

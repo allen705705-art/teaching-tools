@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>小組貢獻度評量｜163班學生填寫</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#0d1117;--bg2:#161b22;--bg3:#21262d;
+  --border:rgba(255,255,255,0.10);
+  --text:#e6edf3;--muted:#8b949e;
+  --accent:#58a6ff;--green:#3fb950;--orange:#f0883e;--red:#f85149;--purple:#bc8cff;--yellow:#e3b341;
+}
+body{min-height:100vh;background:var(--bg);color:var(--text);font-family:'Noto Sans TC','Microsoft JhengHei',sans-serif;font-size:15px}
+header{padding:14px 22px;background:rgba(255,255,255,0.03);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px}
+.logo{width:34px;height:34px;background:linear-gradient(135deg,#58a6ff,#3fb950);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px}
+header h1{font-size:17px;font-weight:700}
+.container{max-width:700px;margin:0 auto;padding:28px 18px 60px}
+
+.steps{display:flex;gap:0;margin-bottom:32px}
+.step{flex:1;text-align:center;position:relative}
+.step::after{content:'';position:absolute;top:15px;left:50%;width:100%;height:2px;background:var(--border);z-index:0}
+.step:last-child::after{display:none}
+.step-dot{width:30px;height:30px;border-radius:50%;border:2px solid var(--border);background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;margin:0 auto 6px;position:relative;z-index:1;color:var(--muted);transition:.3s}
+.step.active .step-dot{background:var(--accent);border-color:var(--accent);color:#fff}
+.step.done .step-dot{background:var(--green);border-color:var(--green);color:#fff}
+.step-label{font-size:11px;color:var(--muted)}
+.step.active .step-label{color:var(--accent)}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:24px;margin-bottom:18px}
+.card-title{font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.6px;margin-bottom:16px}
+label{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
+select,input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:9px;padding:11px 14px;color:var(--text);font-size:15px;font-family:inherit;outline:none;transition:.2s;appearance:none}
+select:focus,input:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(88,166,255,0.12)}
+.info-box{background:rgba(88,166,255,0.08);border:1px solid rgba(88,166,255,0.2);border-radius:10px;padding:14px 18px;margin-top:14px;font-size:14px;line-height:1.7}
+.info-box strong{color:var(--accent)}
+
+.btn{width:100%;padding:13px;border-radius:10px;border:none;font-size:15px;font-family:inherit;cursor:pointer;font-weight:600;transition:.2s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#4493e8}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{filter:brightness(.9)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* section dividers */
+.section-header{font-size:13px;font-weight:700;color:var(--muted);letter-spacing:.5px;margin:28px 0 12px;display:flex;align-items:center;gap:8px}
+.section-header::after{content:'';flex:1;height:1px;background:var(--border)}
+.tag-exp{background:rgba(58,167,255,0.12);border:1px solid rgba(58,167,255,0.25);color:#58a6ff;border-radius:6px;padding:2px 8px;font-size:11px}
+.tag-chal{background:rgba(63,185,80,0.12);border:1px solid rgba(63,185,80,0.25);color:#3fb950;border-radius:6px;padding:2px 8px;font-size:11px}
+
+/* eval card */
+.eval-card{background:var(--bg2);border:1px solid var(--border);border-radius:14px;margin-bottom:20px;overflow:hidden}
+.eval-card-header{padding:16px 20px;display:flex;align-items:center;gap:12px;background:rgba(255,255,255,0.02)}
+.eval-avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0}
+.eval-name{font-weight:700;font-size:16px}
+.eval-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.self-tag{font-size:11px;background:rgba(188,140,255,0.15);border:1px solid rgba(188,140,255,0.3);color:var(--purple);padding:2px 9px;border-radius:20px;margin-left:8px;vertical-align:middle}
+.eval-body{padding:18px 20px}
+
+/* criterion row */
+.criterion{margin-bottom:18px}
+.criterion:last-child{margin-bottom:0}
+.crit-label{font-size:13px;font-weight:600;margin-bottom:3px;display:flex;justify-content:space-between;align-items:center}
+.crit-desc{font-size:11px;color:var(--muted);margin-bottom:10px}
+.crit-score-badge{min-width:24px;text-align:center;font-size:18px;font-weight:900;color:var(--accent)}
+.score-row{display:flex;gap:5px}
+.score-btn{flex:1;height:46px;border-radius:8px;border:1.5px solid var(--border);background:rgba(255,255,255,0.03);color:var(--muted);font-size:14px;font-weight:700;cursor:pointer;transition:.15s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1.1}
+.score-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(88,166,255,0.07)}
+.score-btn.sel{color:#fff}
+.score-btn.sel.s1{background:#f85149;border-color:#f85149}
+.score-btn.sel.s2{background:#f0883e;border-color:#f0883e}
+.score-btn.sel.s3{background:#e3b341;border-color:#e3b341;color:#000}
+.score-btn.sel.s4{background:#3fb950;border-color:#3fb950}
+.score-btn.sel.s5{background:#58a6ff;border-color:#58a6ff}
+.score-emoji{font-size:14px}
+.score-num{font-size:13px;font-weight:900}
+.hint-row{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-top:4px;padding:0 2px}
+
+/* progress */
+.progress-wrap{background:var(--bg3);border-radius:4px;height:5px;margin-top:10px;overflow:hidden}
+.progress-fill{height:100%;background:var(--accent);border-radius:4px;transition:.4s}
+.progress-text{font-size:12px;color:var(--muted);margin-top:5px}
+
+/* success */
+.success-wrap{text-align:center;padding:60px 20px}
+.success-icon{font-size:72px;margin-bottom:20px}
+.success-title{font-size:26px;font-weight:900;margin-bottom:10px}
+.success-sub{color:var(--muted);font-size:15px;line-height:1.7}
+
+.alert{padding:12px 16px;border-radius:9px;font-size:13px;margin-bottom:14px}
+.alert-red{background:rgba(248,81,73,0.10);border:1px solid rgba(248,81,73,0.3);color:var(--red)}
+.alert-orange{background:rgba(240,136,62,0.10);border:1px solid rgba(240,136,62,0.3);color:var(--orange)}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);background:#1c2128;border:1px solid var(--border);border-radius:10px;padding:11px 22px;font-size:14px;z-index:999;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+#page-login,#page-eval,#page-done{display:none}
+#page-login.active,#page-eval.active,#page-done.active{display:block}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">📊</div>
+  <h1>小組貢獻度評量｜163班</h1>
+</header>
+
+<div class="container">
+  <div class="steps">
+    <div class="step active" id="step1"><div class="step-dot">1</div><div class="step-label">確認身分</div></div>
+    <div class="step" id="step2"><div class="step-dot">2</div><div class="step-label">填寫評量</div></div>
+    <div class="step" id="step3"><div class="step-dot">3</div><div class="step-label">提交完成</div></div>
+  </div>
+
+  <!-- 頁面1：選擇座號 -->
+  <div id="page-login" class="active">
+    <div class="card">
+      <div class="card-title">確認你的身分</div>
+      <div id="login-alert"></div>
+      <label>請選擇你的座號</label>
+      <select id="sel-seat" onchange="onSeatChange()">
+        <option value="">── 選擇座號 ──</option>
+      </select>
+      <div id="seat-info" class="info-box" style="display:none"></div>
+    </div>
+    <button class="btn btn-primary" id="btn-start" onclick="startEval()" disabled>開始填寫評量 →</button>
+  </div>
+
+  <!-- 頁面2：填寫評量 -->
+  <div id="page-eval">
+    <div class="card" style="margin-bottom:20px">
+      <div style="font-size:14px">
+        <strong id="eval-name-display"></strong>
+        <span id="eval-group-display" style="color:var(--muted);margin-left:8px"></span>
+      </div>
+      <div class="progress-wrap"><div class="progress-fill" id="prog-fill"></div></div>
+      <div class="progress-text" id="prog-text"></div>
+    </div>
+    <div id="eval-alert"></div>
+    <div id="eval-cards"></div>
+    <button class="btn btn-green" id="submit-btn" onclick="submitAll()">提交所有評量 ✓</button>
+  </div>
+
+  <!-- 頁面3：完成 -->
+  <div id="page-done">
+    <div class="success-wrap">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">已成功提交！</div>
+      <div class="success-sub" id="done-msg">感謝填寫，老師會在課後統計結果。</div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAov-9uW6FZQmf41-PPJ4-plvqR-Bu6zg4",
+  authDomain: "teaching-test-5fd1c.firebaseapp.com",
+  projectId: "teaching-test-5fd1c",
+  storageBucket: "teaching-test-5fd1c.firebasestorage.app",
+  messagingSenderId: "404776287999",
+  appId: "1:404776787999:web:6b14120c71c8962fe396ca"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const COLL = 'groupContrib_163';
+
+/* ── 學生與組別資料 ── */
+const STUDENTS = {
+  '01':'杜羽喬','02':'林奕澄','03':'王訢楷','04':'吳冠辰','05':'吳紹瑜',
+  '06':'吳紹齊','07':'呂丞立','08':'李世弘','09':'李秉翰','10':'李宥叡',
+  '11':'沈湧智','12':'林宜勳','13':'林冠頤','14':'林威廷','15':'林楷哲',
+  '16':'倪紹恩','17':'張崇毅','18':'陳定渝','19':'陳彥旭','20':'陳禹淮',
+  '21':'黃彥瑋','22':'黃致樸','23':'楊硯博','24':'楊閎宇','25':'廖梓淞',
+  '26':'劉紘綱','27':'蕭泓胤','28':'鍾孟栩','29':'鍾尚廷'
+};
+const GROUPS = {
+  '第一組':['01','14','19','27'],
+  '第二組':['02','06','08','12'],
+  '第三組':['03','17','21','28'],
+  '第四組':['04','07','11','26'],
+  '第五組':['05','15','22','29'],
+  '第六組':['09','10','18','23'],
+  '第七組':['13','16','20','24','25']
+};
+const CRITERIA = [
+  {tag:'實驗',name:'參與任務',desc:'積極投入實驗各步驟，不置身事外'},
+  {tag:'實驗',name:'合作態度',desc:'尊重分工、協助組員、維持良好互動'},
+  {tag:'實驗',name:'實際產出貢獻',desc:'對實驗記錄、報告、成果有具體貢獻'},
+  {tag:'團體挑戰',name:'參與任務',desc:'積極投入討論規劃，不置身事外'},
+  {tag:'團體挑戰',name:'合作態度',desc:'配合時程、準時完成分配工作'},
+  {tag:'團體挑戰',name:'實際產出貢獻',desc:'對最終作品或報告有具體貢獻'}
+];
+const SCORE_LABELS = ['','很少做到','偶爾做到','大致做到','經常做到','完全做到'];
+const SCORE_EMOJIS = ['','😟','😕','😐','🙂','😄'];
+const AVATAR_COLORS = ['#e94560','#3498db','#2ecc71','#f39c12','#9b59b6','#1abc9c','#e67e22','#16a085'];
+
+/* ── 狀態 ── */
+let mySeat = null, myGroup = null, myGroupName = null;
+let scores = {}; // scores[seatNo][criterionIdx] = 1~5
+
+/* ── 初始化下拉選單 ── */
+const sel = document.getElementById('sel-seat');
+Object.entries(STUDENTS).forEach(([no,name])=>{
+  const opt = document.createElement('option');
+  opt.value = no;
+  opt.textContent = `${no} 號 ${name}`;
+  sel.appendChild(opt);
+});
+
+/* ── 座號選擇 ── */
+window.onSeatChange = function(){
+  const v = sel.value;
+  const info = document.getElementById('seat-info');
+  const btn = document.getElementById('btn-start');
+  if(!v){ info.style.display='none'; btn.disabled=true; return; }
+  const group = Object.entries(GROUPS).find(([,m])=>m.includes(v));
+  if(!group){ info.style.display='none'; btn.disabled=true; return; }
+  const [gname, members] = group;
+  const peers = members.filter(m=>m!==v);
+  info.style.display='block';
+  info.innerHTML = `你是 <strong>${v} 號 ${STUDENTS[v]}</strong>，屬於 <strong>${gname}</strong><br>
+    組員：${peers.map(p=>`<strong>${p} 號 ${STUDENTS[p]}</strong>`).join('、')}`;
+  btn.disabled = false;
+};
+
+/* ── 開始評量 ── */
+window.startEval = async function(){
+  const v = sel.value;
+  const alertEl = document.getElementById('login-alert');
+  try{
+    const snap = await getDoc(doc(db, COLL, v));
+    if(snap.exists()){
+      alertEl.innerHTML=`<div class="alert alert-orange">⚠️ 你已經提交過評量。若需修改請聯絡老師。</div>`;
+      return;
+    }
+  }catch(e){ /* 允許繼續 */ }
+
+  const group = Object.entries(GROUPS).find(([,m])=>m.includes(v));
+  mySeat = v;
+  [myGroupName, myGroup] = group;
+
+  // 初始化分數
+  myGroup.forEach(no=>{ scores[no]={}; });
+
+  buildEvalPage();
+  showPage('page-eval');
+  setStep(2);
+};
+
+/* ── 建立評量頁 ── */
+function buildEvalPage(){
+  document.getElementById('eval-name-display').textContent = `${mySeat} 號 ${STUDENTS[mySeat]}`;
+  document.getElementById('eval-group-display').textContent = myGroupName;
+  updateProgress();
+
+  const container = document.getElementById('eval-cards');
+  container.innerHTML='';
+
+  // 自評在最前
+  const order = [mySeat, ...myGroup.filter(n=>n!==mySeat)];
+
+  order.forEach((no,idx)=>{
+    const isSelf = no===mySeat;
+    const color = AVATAR_COLORS[idx % AVATAR_COLORS.length];
+    const card = document.createElement('div');
+    card.className='eval-card'; card.id=`card-${no}`;
+
+    // Group criteria by tag
+    let lastTag='';
+    let criteriaHTML='';
+    CRITERIA.forEach((c,ci)=>{
+      if(c.tag!==lastTag){
+        lastTag=c.tag;
+        const tagClass = c.tag==='實驗'?'tag-exp':'tag-chal';
+        criteriaHTML+=`<div class="section-header"><span class="${tagClass}">[${c.tag}]</span></div>`;
+      }
+      criteriaHTML+=`
+        <div class="criterion" id="crit-${no}-${ci}">
+          <div class="crit-label">
+            <span>${c.name}
+              <span style="font-size:11px;color:var(--muted);font-weight:400;margin-left:6px">${c.desc}</span>
+            </span>
+            <span class="crit-score-badge" id="badge-${no}-${ci}">—</span>
+          </div>
+          <div class="score-row">
+            ${[1,2,3,4,5].map(v=>`
+              <button class="score-btn s${v}" onclick="setScore('${no}',${ci},${v})" title="${SCORE_LABELS[v]}">
+                <span class="score-emoji">${SCORE_EMOJIS[v]}</span>
+                <span class="score-num">${v}</span>
+              </button>`).join('')}
+          </div>
+          <div class="hint-row"><span>很少做到</span><span>完全做到</span></div>
+        </div>`;
+    });
+
+    card.innerHTML=`
+      <div class="eval-card-header">
+        <div class="eval-avatar" style="background:${color}">${STUDENTS[no][0]}</div>
+        <div>
+          <div class="eval-name">${no} 號 ${STUDENTS[no]}
+            ${isSelf?'<span class="self-tag">自評</span>':''}
+          </div>
+          <div class="eval-sub">${isSelf?'請為自己在小組中的貢獻評分':'請為此組員的貢獻評分'}</div>
+        </div>
+      </div>
+      <div class="eval-body">${criteriaHTML}</div>`;
+    container.appendChild(card);
+  });
+}
+
+/* ── 設分數 ── */
+window.setScore = function(no, ci, val){
+  scores[no][ci]=val;
+  // 更新按鈕樣式
+  document.querySelectorAll(`#crit-${no}-${ci} .score-btn`).forEach(btn=>{
+    btn.classList.remove('sel');
+  });
+  document.querySelector(`#crit-${no}-${ci} .score-btn.s${val}`).classList.add('sel');
+  document.getElementById(`badge-${no}-${ci}`).textContent=val;
+  updateProgress();
+};
+
+/* ── 進度 ── */
+function updateProgress(){
+  const total = myGroup ? myGroup.length * CRITERIA.length : 0;
+  let filled=0;
+  if(myGroup) myGroup.forEach(no=>{ CRITERIA.forEach((_,ci)=>{ if(scores[no]&&scores[no][ci]) filled++; }); });
+  const pct = total>0 ? Math.round(filled/total*100) : 0;
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-text').textContent=`已填 ${filled} / ${total} 題（${pct}%）`;
+}
+
+/* ── 提交 ── */
+window.submitAll = async function(){
+  // 檢查是否全填
+  let missing=[];
+  myGroup.forEach(no=>{
+    CRITERIA.forEach((_,ci)=>{
+      if(!scores[no]||!scores[no][ci]) missing.push({no,ci});
+    });
+  });
+  if(missing.length>0){
+    const alertEl = document.getElementById('eval-alert');
+    alertEl.innerHTML=`<div class="alert alert-red">⚠️ 尚有 ${missing.length} 題未填，請確認所有題目都已評分後再提交。</div>`;
+    // 捲到第一個未填
+    const {no,ci} = missing[0];
+    document.getElementById(`crit-${no}-${ci}`).scrollIntoView({behavior:'smooth',block:'center'});
+    return;
+  }
+  document.getElementById('eval-alert').innerHTML='';
+  document.getElementById('submit-btn').disabled=true;
+  document.getElementById('submit-btn').textContent='提交中…';
+
+  try{
+    const selfScores={};
+    const peerScores={};
+    CRITERIA.forEach((_,ci)=>{ selfScores[`q${ci+1}`]=scores[mySeat][ci]; });
+    myGroup.filter(n=>n!==mySeat).forEach(no=>{
+      peerScores[no]={};
+      CRITERIA.forEach((_,ci)=>{ peerScores[no][`q${ci+1}`]=scores[no][ci]; });
+    });
+
+    await setDoc(doc(db, COLL, mySeat),{
+      seatNo: mySeat,
+      name: STUDENTS[mySeat],
+      group: myGroupName,
+      submittedAt: serverTimestamp(),
+      self: selfScores,
+      peers: peerScores
+    });
+
+    document.getElementById('done-msg').innerHTML=
+      `<strong>${STUDENTS[mySeat]}</strong> 同學，感謝你認真填寫！<br>老師會在課後統計結果並提供回饋。`;
+    showPage('page-done');
+    setStep(3);
+  }catch(e){
+    document.getElementById('submit-btn').disabled=false;
+    document.getElementById('submit-btn').textContent='提交所有評量 ✓';
+    document.getElementById('eval-alert').innerHTML=`<div class="alert alert-red">提交失敗：${e.message}</div>`;
+  }
+};
+
+/* ── UI helpers ── */
+function showPage(id){
+  ['page-login','page-eval','page-done'].forEach(p=>{
+    document.getElementById(p).classList.toggle('active', p===id);
+  });
+}
+function setStep(n){
+  [1,2,3].forEach(i=>{
+    const el=document.getElementById('step'+i);
+    el.classList.remove('active','done');
+    if(i<n) el.classList.add('done');
+    else if(i===n) el.classList.add('active');
+  });
+}
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+</script>
+</body>
+</html>
