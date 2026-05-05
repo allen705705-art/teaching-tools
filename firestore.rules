@@ -24,6 +24,17 @@ service cloud.firestore {
       allow write: if int(studentId) >= 1 && int(studentId) <= 36;
     }
 
+    // 小組貢獻評量：梯次（任何人可讀；只允許建立，不允許刪除）
+    match /peerEval_sessions/{sessionId} {
+      allow read: if true;
+      allow create, update: if true;
+    }
+
+    // 小組貢獻評量：學生作答（任何人可讀寫，文件 ID 為 sessionId_seatNo）
+    match /peerEval_responses/{responseId} {
+      allow read, write: if true;
+    }
+
     // 其他集合預設禁止存取
     match /{document=**} {
       allow read, write: if false;
