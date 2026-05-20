@@ -18,10 +18,16 @@ service cloud.firestore {
       allow read, write: if true;
     }
 
-    // 座位志願填選：任何人可讀；座號 1–36 的文件可寫
+    // 班級名單（老師上傳，學生查詢用）：任何人可讀 idHash，老師可寫
+    match /class_roster/{seatId} {
+      allow read: if true;
+      allow write: if true;
+    }
+
+    // 座位志願填選：任何人可讀；座號 1–30 的文件可寫
     match /seat_preferences/{studentId} {
       allow read: if true;
-      allow write: if int(studentId) >= 1 && int(studentId) <= 36;
+      allow write: if int(studentId) >= 1 && int(studentId) <= 30;
     }
 
     // 小組貢獻評量：梯次（任何人可讀；只允許建立，不允許刪除）
