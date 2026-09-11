@@ -5,7 +5,7 @@ import {
 import {
   APP_TITLE, APP_SUBTITLE, CONTENT_VERSION, FIREBASE_CONFIG, QUESTIONS, CLOSING_ACTIONS,
   OPTION_STYLES, normalizeSessionCode, makeParticipantId
-} from './parent-meeting-data.js';
+} from './parent-meeting-data.js?v=2';
 
 const app = initializeApp(FIREBASE_CONFIG);
 const db = getFirestore(app);

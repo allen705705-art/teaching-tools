@@ -5,7 +5,7 @@ import {
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import {
   APP_TITLE, CONTENT_VERSION, FIREBASE_CONFIG, QUESTIONS, OPTION_STYLES, normalizeSessionCode
-} from './parent-meeting-data.js';
+} from './parent-meeting-data.js?v=2';
 
 const app = initializeApp(FIREBASE_CONFIG);
 const db = getFirestore(app);
