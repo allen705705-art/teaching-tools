@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="高中化學鹽類酸鹼性互動學習網頁：從解離、水解到酸鹼性判斷。">
+  <title>離子偵探所｜鹽類的酸鹼性</title>
+  <style>
+    :root {
+      --ink: #163044;
+      --muted: #60788a;
+      --paper: #f6f3e9;
+      --card: #fffdf7;
+      --navy: #12344c;
+      --cyan: #00a6a6;
+      --cyan-soft: #dff7f3;
+      --coral: #ee6c4d;
+      --coral-soft: #fff0e9;
+      --amber: #f2b84b;
+      --blue: #3478bd;
+      --blue-soft: #e8f2ff;
+      --green: #23876f;
+      --line: #d9dfdc;
+      --shadow: 0 16px 42px rgba(18, 52, 76, .10);
+      --radius: 22px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 8% 8%, rgba(242,184,75,.16), transparent 24rem),
+        radial-gradient(circle at 92% 22%, rgba(0,166,166,.10), transparent 25rem),
+        var(--paper);
+      font-family: "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      line-height: 1.7;
+    }
+    button, select, input { font: inherit; }
+    button { -webkit-tap-highlight-color: transparent; }
+    a { color: inherit; }
+
+    .skip-link { position: fixed; left: 1rem; top: -5rem; z-index: 100; background: white; padding: .6rem 1rem; border-radius: 8px; }
+    .skip-link:focus { top: 1rem; }
+    .nav {
+      position: sticky; top: 0; z-index: 30;
+      display: flex; align-items: center; justify-content: space-between;
+      min-height: 66px; padding: .7rem clamp(1rem, 4vw, 4rem);
+      color: white; background: rgba(18,52,76,.94); backdrop-filter: blur(14px);
+      box-shadow: 0 5px 20px rgba(18,52,76,.18);
+    }
+    .brand { display: flex; align-items: center; gap: .75rem; text-decoration: none; font-weight: 900; letter-spacing: .06em; }
+    .brand-mark { display: grid; place-items: center; width: 38px; height: 38px; border: 2px solid rgba(255,255,255,.7); border-radius: 50%; color: var(--amber); }
+    .nav-links { display: flex; gap: .25rem; }
+    .nav-links a { padding: .45rem .8rem; border-radius: 999px; text-decoration: none; font-size: .9rem; color: rgba(255,255,255,.84); }
+    .nav-links a:hover, .nav-links a:focus-visible { background: rgba(255,255,255,.12); color: white; outline: none; }
+
+    .hero { position: relative; min-height: 620px; display: grid; place-items: center; overflow: hidden; padding: 5rem 1.25rem 6.5rem; color: white; background: linear-gradient(145deg, #12344c 0%, #17536c 55%, #087d7c 100%); }
+    .hero::after { content: ""; position: absolute; inset: auto 0 0; height: 70px; background: var(--paper); clip-path: polygon(0 80%, 18% 30%, 42% 75%, 65% 20%, 82% 62%, 100% 18%, 100% 100%, 0 100%); }
+    .hero-inner { position: relative; z-index: 2; width: min(1100px, 100%); display: grid; grid-template-columns: 1.2fr .8fr; gap: 3rem; align-items: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: .5rem; margin: 0 0 1rem; padding: .35rem .85rem; border: 1px solid rgba(255,255,255,.35); border-radius: 999px; background: rgba(255,255,255,.08); font-size: .78rem; font-weight: 800; letter-spacing: .14em; }
+    .hero h1 { max-width: 720px; margin: 0; font-size: clamp(2.8rem, 7vw, 5.8rem); line-height: 1.05; letter-spacing: -.055em; }
+    .hero h1 span { color: #79e0d3; }
+    .hero-copy { max-width: 650px; margin: 1.4rem 0 2rem; font-size: clamp(1rem, 2vw, 1.2rem); color: rgba(255,255,255,.82); }
+    .hero-actions { display: flex; flex-wrap: wrap; gap: .8rem; }
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: .45rem; min-height: 46px; padding: .65rem 1.2rem; border: 0; border-radius: 12px; cursor: pointer; text-decoration: none; font-weight: 850; transition: transform .18s, box-shadow .18s, background .18s; }
+    .btn:hover { transform: translateY(-2px); }
+    .btn-primary { color: var(--navy); background: var(--amber); box-shadow: 0 8px 24px rgba(242,184,75,.25); }
+    .btn-ghost { color: white; border: 1px solid rgba(255,255,255,.4); background: rgba(255,255,255,.08); }
+    .hero-visual { position: relative; height: 380px; display: grid; place-items: center; }
+    .beaker { position: relative; width: 260px; height: 290px; border: 5px solid rgba(255,255,255,.7); border-top: 0; border-radius: 0 0 48px 48px; transform: perspective(500px) rotateY(-5deg); box-shadow: inset 0 -120px rgba(91,221,213,.24), 0 30px 55px rgba(0,0,0,.18); }
+    .beaker::before { content: ""; position: absolute; left: -20px; top: -7px; width: 285px; height: 18px; border: 5px solid rgba(255,255,255,.75); border-radius: 50%; }
+    .beaker::after { content: "H₂O"; position: absolute; inset: auto 0 22px; text-align: center; color: rgba(255,255,255,.4); font-weight: 900; font-size: 2.8rem; }
+    .ion { position: absolute; z-index: 3; display: grid; place-items: center; width: 62px; height: 62px; border-radius: 50%; box-shadow: 0 10px 24px rgba(0,0,0,.22); font: 800 1rem Georgia, serif; animation: bob 4s ease-in-out infinite; }
+    .ion.plus { left: 22px; top: 90px; color: #7b2b1a; background: #ffc2a8; }
+    .ion.minus { right: 18px; top: 160px; color: #064b56; background: #a5eee8; animation-delay: -2s; }
+    .bubble { position: absolute; width: 13px; height: 13px; border: 2px solid rgba(255,255,255,.5); border-radius: 50%; animation: rise 4s linear infinite; }
+    .b1 { left: 45%; bottom: 30px; } .b2 { left: 28%; bottom: 70px; animation-delay: -1.7s; } .b3 { left: 68%; bottom: 40px; animation-delay: -3s; }
+    @keyframes bob { 50% { transform: translateY(-14px) rotate(5deg); } }
+    @keyframes rise { to { transform: translateY(-230px) scale(.5); opacity: 0; } }
+
+    main { overflow: hidden; }
+    .section { padding: clamp(4rem, 8vw, 7rem) 1.25rem; }
+    .section.alt { background: rgba(255,255,255,.65); border-block: 1px solid rgba(18,52,76,.07); }
+    .container { width: min(1100px, 100%); margin: auto; }
+    .section-head { max-width: 720px; margin: 0 auto 2.6rem; text-align: center; }
+    .kicker { margin: 0 0 .45rem; color: var(--coral); font-size: .78rem; font-weight: 900; letter-spacing: .16em; text-transform: uppercase; }
+    h2 { margin: 0; font-size: clamp(1.8rem, 4vw, 3.1rem); line-height: 1.25; letter-spacing: -.025em; }
+    .section-head > p:last-child { margin: .8rem auto 0; color: var(--muted); }
+
+    .concept-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem; }
+    .concept { position: relative; min-height: 250px; padding: 1.5rem; overflow: hidden; background: var(--card); border: 1px solid rgba(18,52,76,.08); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .concept::after { content: attr(data-step); position: absolute; right: -5px; bottom: -35px; color: rgba(18,52,76,.05); font-size: 8rem; font-weight: 950; }
+    .concept-icon { display: grid; place-items: center; width: 54px; height: 54px; margin-bottom: 1rem; border-radius: 16px; background: var(--cyan-soft); font-size: 1.55rem; }
+    .concept:nth-child(2) .concept-icon { background: var(--coral-soft); }
+    .concept:nth-child(3) .concept-icon { background: #fff4d5; }
+    .concept h3 { margin: 0 0 .5rem; font-size: 1.15rem; }
+    .concept p { margin: 0; color: var(--muted); font-size: .93rem; }
+    .equation { position: relative; z-index: 1; margin-top: 1rem; padding: .65rem .8rem; border-radius: 10px; background: #f0f4f3; font: 700 .9rem Georgia, "Times New Roman", serif; overflow-x: auto; white-space: nowrap; }
+    .callout { display: flex; gap: .8rem; align-items: flex-start; margin-top: 1.2rem; padding: 1rem 1.2rem; border-left: 4px solid var(--amber); border-radius: 0 14px 14px 0; background: #fff8df; }
+    .callout strong { flex: 0 0 auto; }
+
+    .lab-shell { display: grid; grid-template-columns: .78fr 1.22fr; gap: 1.3rem; align-items: start; }
+    .panel { background: var(--card); border: 1px solid rgba(18,52,76,.09); border-radius: var(--radius); box-shadow: var(--shadow); }
+    .controls { padding: 1.4rem; position: sticky; top: 84px; }
+    .controls h3, .result h3 { margin: 0 0 1.1rem; }
+    .field { margin-bottom: 1.1rem; }
+    .field label { display: block; margin-bottom: .4rem; font-weight: 800; font-size: .88rem; }
+    select { width: 100%; min-height: 48px; padding: .55rem .8rem; color: var(--ink); border: 1px solid #bcc9c9; border-radius: 10px; background: white; }
+    input[type="range"] { width: 100%; accent-color: var(--cyan); }
+    .range-row { display: flex; justify-content: space-between; gap: .5rem; color: var(--muted); font-size: .82rem; }
+    .segmented { display: grid; grid-template-columns: repeat(4,1fr); gap: .4rem; }
+    .segment { min-height: 42px; padding: .45rem; color: var(--ink); border: 1px solid var(--line); border-radius: 10px; background: white; cursor: pointer; font-weight: 800; }
+    .segment.active, .segment:hover { color: white; border-color: var(--navy); background: var(--navy); }
+    .result { overflow: hidden; }
+    .result-top { padding: 1.5rem; color: white; background: linear-gradient(135deg, var(--navy), #196475); }
+    .result-label { margin-bottom: .35rem; color: rgba(255,255,255,.68); font-size: .8rem; font-weight: 800; letter-spacing: .1em; }
+    .result-formula { margin: 0; font: 900 clamp(2.3rem, 6vw, 4.6rem)/1 Georgia, serif; }
+    .result-name { margin-top: .4rem; color: rgba(255,255,255,.78); }
+    .result-body { padding: 1.5rem; }
+    .classification { display: grid; grid-template-columns: repeat(3, 1fr); gap: .7rem; }
+    .stat { padding: .8rem; border-radius: 12px; background: #f1f5f3; }
+    .stat span { display: block; color: var(--muted); font-size: .75rem; }
+    .stat strong { display: block; margin-top: .18rem; font-size: .92rem; }
+    .ph-wrap { display: grid; grid-template-columns: 150px 1fr; gap: 1.1rem; align-items: center; margin: 1.3rem 0; padding: 1rem; border: 1px solid var(--line); border-radius: 16px; }
+    .ph-number { text-align: center; }
+    .ph-number span { display: block; color: var(--muted); font-size: .78rem; }
+    .ph-number strong { display: block; font-size: 2.5rem; line-height: 1.1; }
+    .ph-scale { position: relative; height: 22px; border-radius: 99px; background: linear-gradient(90deg,#e84b4b,#f6b44b 38%,#72b96a 50%,#51b7c1 66%,#5267c5); }
+    .ph-marker { position: absolute; top: -8px; width: 4px; height: 38px; border-radius: 4px; background: var(--ink); transform: translateX(-50%); transition: left .35s ease; }
+    .ph-labels { display: flex; justify-content: space-between; margin-top: .35rem; font-size: .72rem; color: var(--muted); }
+    .reasoning { margin: 0; padding: 0; list-style: none; counter-reset: reason; }
+    .reasoning li { position: relative; padding: .65rem .5rem .65rem 2.45rem; border-bottom: 1px dashed var(--line); }
+    .reasoning li::before { counter-increment: reason; content: counter(reason); position: absolute; left: .3rem; top: .7rem; display: grid; place-items: center; width: 25px; height: 25px; color: white; border-radius: 50%; background: var(--cyan); font-weight: 900; font-size: .78rem; }
+    .reasoning li:last-child { border-bottom: 0; }
+    .lab-note { margin: .85rem 0 0; color: var(--muted); font-size: .78rem; }
+
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
+    .compare-card { padding: 1.4rem; border-radius: var(--radius); background: var(--card); box-shadow: var(--shadow); }
+    .compare-card h3 { display: flex; align-items: center; gap: .6rem; margin: 0 0 .8rem; }
+    .badge { display: inline-flex; align-items: center; padding: .18rem .55rem; border-radius: 99px; color: white; background: var(--coral); font-size: .7rem; font-weight: 900; }
+    .compare-card:nth-child(2) .badge { background: var(--blue); }
+    .compare-card p { color: var(--muted); }
+    .compare-arrow { margin: .8rem 0; text-align: center; color: var(--cyan); font-weight: 950; }
+    .compare-answer { padding: .8rem; border-radius: 10px; background: #f2f5f3; font-weight: 800; }
+
+    .quiz-shell { width: min(780px, 100%); margin: auto; overflow: hidden; }
+    .student-name-box { display: flex; align-items: center; gap: 1rem; padding: 1rem 1.3rem; border-bottom: 1px solid var(--line); background: #fffdf7; }
+    .student-name-box label { flex: 0 0 auto; font-size: .88rem; font-weight: 900; }
+    .student-name-box input { width: 100%; min-height: 44px; padding: .55rem .8rem; color: var(--ink); border: 1px solid #bcc9c9; border-radius: 10px; background: white; }
+    .student-name-box input:focus { outline: 3px solid rgba(0,166,166,.18); border-color: var(--cyan); }
+    .quiz-head { display: flex; justify-content: space-between; gap: 1rem; align-items: center; padding: 1rem 1.3rem; color: white; background: var(--navy); }
+    .progress-track { width: 180px; height: 8px; overflow: hidden; border-radius: 99px; background: rgba(255,255,255,.2); }
+    .progress-bar { height: 100%; width: 0; background: var(--amber); transition: width .3s; }
+    .quiz-body { padding: clamp(1.3rem,4vw,2.2rem); }
+    .quiz-meta { color: var(--coral); font-size: .78rem; font-weight: 900; letter-spacing: .1em; }
+    .question { min-height: 68px; margin: .5rem 0 1.3rem; font-size: clamp(1.2rem,3vw,1.55rem); font-weight: 850; line-height: 1.45; }
+    .options { display: grid; gap: .65rem; }
+    .option { position: relative; width: 100%; min-height: 52px; padding: .7rem 1rem .7rem 3.3rem; text-align: left; color: var(--ink); border: 1px solid var(--line); border-radius: 12px; background: white; cursor: pointer; }
+    .option::before { content: attr(data-letter); position: absolute; left: .8rem; top: 50%; display: grid; place-items: center; width: 29px; height: 29px; border-radius: 50%; background: #edf2f0; transform: translateY(-50%); font-weight: 900; }
+    .option:hover:not(:disabled) { border-color: var(--cyan); background: #f5fffd; }
+    .option.correct { border-color: var(--green); background: #e8f7ef; }
+    .option.wrong { border-color: var(--coral); background: var(--coral-soft); }
+    .feedback { display: none; margin-top: 1rem; padding: 1rem; border-radius: 12px; background: #f1f5f3; }
+    .feedback.show { display: block; }
+    .feedback strong { display: block; margin-bottom: .2rem; }
+    .quiz-actions { display: flex; justify-content: flex-end; margin-top: 1rem; }
+    .quiz-actions .btn { color: white; background: var(--cyan); }
+    .quiz-actions .btn[hidden] { display: none; }
+    .final-score { display: none; padding: 2rem; text-align: center; }
+    .final-score.show { display: block; }
+    .certificate-recipient { margin: -.25rem 0 .8rem; color: var(--cyan); font-size: 1.1rem; font-weight: 900; }
+    .certificate-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .7rem; margin-top: 1.2rem; }
+    .download-btn { color: white; background: var(--cyan); box-shadow: 0 8px 22px rgba(0,166,166,.2); }
+    .certificate-status { min-height: 1.5rem; margin: .65rem 0 0; color: var(--coral); font-size: .82rem; font-weight: 800; }
+    .score-ring { display: grid; place-items: center; width: 145px; height: 145px; margin: 0 auto 1rem; border-radius: 50%; background: conic-gradient(var(--cyan) var(--score), #e3e9e6 0); }
+    .score-ring::before { content: ""; grid-area: 1/1; width: 112px; height: 112px; border-radius: 50%; background: var(--card); }
+    .score-ring strong { position: relative; grid-area: 1/1; font-size: 2rem; }
+    footer { padding: 2.2rem 1.25rem; color: rgba(255,255,255,.7); background: var(--navy); text-align: center; font-size: .82rem; }
+
+    @media (max-width: 820px) {
+      .hero-inner, .lab-shell { grid-template-columns: 1fr; }
+      .hero { min-height: auto; padding-top: 4rem; }
+      .hero-visual { height: 330px; }
+      .concept-grid { grid-template-columns: 1fr; }
+      .controls { position: static; }
+    }
+    @media (max-width: 620px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 3.2rem; }
+      .beaker { transform: scale(.82); }
+      .hero-visual { height: 280px; }
+      .classification, .compare-grid { grid-template-columns: 1fr; }
+      .ph-wrap { grid-template-columns: 1fr; }
+      .progress-track { width: 100px; }
+      .student-name-box { align-items: stretch; flex-direction: column; gap: .35rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要內容</a>
+  <nav class="nav" aria-label="主選單">
+    <a class="brand" href="#top"><span class="brand-mark" aria-hidden="true">⊕</span>離子偵探所</a>
+    <div class="nav-links">
+      <a href="#concept">核心觀念</a><a href="#lab">水解實驗台</a><a href="#compare">迷思拆解</a><a href="#quiz">挑戰測驗</a>
+    </div>
+  </nav>
+
+  <header class="hero" id="top">
+    <div class="hero-inner">
+      <div>
+        <p class="eyebrow">高中化學 · 酸鹼平衡</p>
+        <h1>鹽是中性？<br><span>先別急著下結論。</span></h1>
+        <p class="hero-copy">鹽溶於水後，離子可能和水發生反應。追蹤陽離子與陰離子的「來歷」，你就能有根據地判斷溶液的酸鹼性。</p>
+        <div class="hero-actions"><a class="btn btn-primary" href="#lab">開始辦案 →</a><a class="btn btn-ghost" href="#concept">先看判斷原則</a></div>
+      </div>
+      <div class="hero-visual" aria-label="燒杯中陽離子與陰離子漂浮的示意動畫">
+        <div class="beaker"><span class="ion plus">NH₄⁺</span><span class="ion minus">Cl⁻</span><i class="bubble b1"></i><i class="bubble b2"></i><i class="bubble b3"></i></div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section" id="concept">
+      <div class="container">
+        <div class="section-head"><p class="kicker">Three clues</p><h2>用三條線索破案</h2><p>判斷鹽水溶液的酸鹼性，不是看化學式中有沒有 H 或 OH，而是看離子是否會水解。</p></div>
+        <div class="concept-grid">
+          <article class="concept" data-step="1"><div class="concept-icon">🧲</div><h3>1. 先拆成離子</h3><p>可溶性鹽在水中先解離。陽離子與陰離子要分別審查。</p><div class="equation">NH₄Cl(aq) → NH₄⁺(aq) + Cl⁻(aq)</div></article>
+          <article class="concept" data-step="2"><div class="concept-icon">🔎</div><h3>2. 追查共軛酸鹼</h3><p>強酸的共軛鹼、強鹼的共軛酸通常可視為不水解；弱酸或弱鹼的共軛物則要留意。</p><div class="equation">K<sub>a</sub> × K<sub>b</sub> = K<sub>w</sub></div></article>
+          <article class="concept" data-step="3"><div class="concept-icon">⚖️</div><h3>3. 比較哪個反應占優</h3><p>只有陽離子水解多半呈酸性；只有陰離子水解多半呈鹼性；兩者都水解就比較 K<sub>a</sub> 與 K<sub>b</sub>。</p><div class="equation">NH₄⁺ + H₂O ⇌ NH₃ + H₃O⁺</div></article>
+        </div>
+        <div class="callout"><strong>關鍵提醒</strong><span>「酸式鹽」是組成分類，「酸性鹽溶液」是水溶液性質，兩者不等價。例如 NaHCO₃ 是酸式鹽，但其水溶液通常呈弱鹼性。</span></div>
+      </div>
+    </section>
+
+    <section class="section alt" id="lab">
+      <div class="container">
+        <div class="section-head"><p class="kicker">Hydrolysis lab</p><h2>離子水解實驗台</h2><p>選一種鹽、調整濃度，看它如何解離、水解，並得出酸鹼性結論。</p></div>
+        <div class="lab-shell">
+          <aside class="panel controls">
+            <h3>實驗條件</h3>
+            <div class="field"><label for="salt-select">選擇鹽類</label><select id="salt-select"></select></div>
+            <div class="field"><label for="conc-slider">初濃度：<span id="conc-label">0.10 mol/L</span></label><input id="conc-slider" type="range" min="-3" max="0" step="1" value="-1"><div class="range-row"><span>0.001 M</span><span>1.0 M</span></div></div>
+            <div class="field"><label>快速篩選</label><div class="segmented" role="group" aria-label="依酸鹼性篩選"><button class="segment active" data-filter="all">全部</button><button class="segment" data-filter="acid">酸性</button><button class="segment" data-filter="neutral">中性</button><button class="segment" data-filter="basic">鹼性</button></div></div>
+            <p class="lab-note">※ pH 為 25 °C 、理想溶液的教學估算值；實際值受活性、溫度與多步平衡影響。</p>
+          </aside>
+          <article class="panel result" aria-live="polite">
+            <div class="result-top"><div class="result-label">CURRENT SAMPLE</div><p class="result-formula" id="salt-formula"></p><div class="result-name" id="salt-name"></div></div>
+            <div class="result-body">
+              <div class="classification"><div class="stat"><span>組成類型</span><strong id="salt-type"></strong></div><div class="stat"><span>來源</span><strong id="salt-source"></strong></div><div class="stat"><span>水溶液</span><strong id="salt-nature"></strong></div></div>
+              <div class="ph-wrap"><div class="ph-number"><span>估算 pH</span><strong id="ph-value"></strong></div><div><div class="ph-scale" aria-label="pH 0 到 14 色帶"><i class="ph-marker" id="ph-marker"></i></div><div class="ph-labels"><span>0 酸性</span><span>7 中性</span><span>14 鹼性</span></div></div></div>
+              <h3>判斷證據</h3><ol class="reasoning" id="reasoning"></ol>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="compare">
+      <div class="container">
+        <div class="section-head"><p class="kicker">Myth busters</p><h2>兩組最容易誤判的鹽</h2><p>先分清「名稱」與「水溶液性質」，再用平衡常數說話。</p></div>
+        <div class="compare-grid">
+          <article class="compare-card"><h3><span class="badge">酸式鹽</span> NaH₂PO₄ vs. NaHS</h3><p>兩者的陰離子都能「給 H⁺」也能「收 H⁺」，但授質子與受質子的相對傾向不同。</p><div class="compare-arrow">酸式鹽 ≠ 酸性溶液</div><div class="compare-answer">NaH₂PO₄：pH ≈ 4.7，酸性<br>NaHS：pH ≈ 10.0，鹼性</div></article>
+          <article class="compare-card"><h3><span class="badge">弱酸弱鹼鹽</span> NH₄CH₃COO</h3><p>NH₄⁺ 會產生 H₃O⁺，CH₃COO⁻ 會產生 OH⁻，不能只看其中一方。</p><div class="compare-arrow">比較 K<sub>a</sub>(NH₄⁺) 與 K<sub>b</sub>(CH₃COO⁻)</div><div class="compare-answer">兩者數值接近，所以在理想近似下 pH 接近 7。</div></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alt" id="quiz">
+      <div class="container">
+        <div class="section-head"><p class="kicker">Case challenge</p><h2>鹽類鑑識挑戰</h2><p>共 6 題，每題作答後立即看到判斷依據。</p></div>
+        <div class="panel quiz-shell">
+          <div class="student-name-box">
+            <label for="student-name">挑戰者姓名</label>
+            <input id="student-name" type="text" maxlength="24" autocomplete="name" placeholder="輸入姓名，完成後可下載證書">
+          </div>
+          <div id="quiz-play">
+            <div class="quiz-head"><strong id="quiz-count">第 1 / 6 題</strong><div class="progress-track" aria-label="測驗進度"><div class="progress-bar" id="progress-bar"></div></div><span id="score-label">0 分</span></div>
+            <div class="quiz-body"><div class="quiz-meta">案件判讀</div><div class="question" id="question"></div><div class="options" id="options"></div><div class="feedback" id="feedback" role="status"></div><div class="quiz-actions"><button class="btn" id="next-btn" hidden>下一題 →</button></div></div>
+          </div>
+          <div class="final-score" id="final-score"><div class="score-ring" id="score-ring"><strong id="score-number"></strong></div><h3 id="score-title"></h3><p class="certificate-recipient" id="certificate-recipient"></p><p id="score-message"></p><div class="certificate-actions"><button class="btn download-btn" id="download-certificate">下載挑戰證書 ↓</button><button class="btn btn-primary" id="restart-btn">再挑戰一次</button></div><p class="certificate-status" id="certificate-status" role="status"></p></div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>離子偵探所 · 高中化學互動教學 · 請以課堂採用的 K<sub>a</sub> / K<sub>b</sub> 表為準</footer>
+
+  <script>
+    const salts = [
+      { id:'nacl', formula:'NaCl', name:'氯化鈉', type:'正鹽', source:'強酸＋強鹼', nature:'中性', group:'neutral', mode:'neutral', lines:['NaCl 完全解離為 Na⁺ 與 Cl⁻。','Na⁺ 來自強鹼 NaOH，Cl⁻ 來自強酸 HCl，兩者都可視為不水解。','溶液的酸鹼平衡主要由水的自解離決定，25 °C 時 pH ≈ 7。'] },
+      { id:'kno3', formula:'KNO₃', name:'硝酸鉀', type:'正鹽', source:'強酸＋強鹼', nature:'中性', group:'neutral', mode:'neutral', lines:['KNO₃ 解離為 K⁺ 與 NO₃⁻。','K⁺ 是強鹼 KOH 的共軛酸，NO₃⁻ 是強酸 HNO₃ 的共軛鹼，水解可忽略。','25 °C 時溶液接近中性。'] },
+      { id:'nh4cl', formula:'NH₄Cl', name:'氯化銨', type:'正鹽', source:'強酸＋弱鹼', nature:'酸性', group:'acid', mode:'weakAcid', K:5.6e-10, equation:'NH₄⁺ + H₂O ⇌ NH₃ + H₃O⁺', lines:['NH₄Cl 解離為 NH₄⁺ 與 Cl⁻。','Cl⁻ 不水解；NH₄⁺ 是弱鹼 NH₃ 的共軛酸，會和水反應。','{{eq}}，產生 H₃O⁺，所以呈酸性。'] },
+      { id:'mgcl2', formula:'MgCl₂', name:'氯化鏂', type:'正鹽', source:'Cl⁻ 不水解；水合 Mg²⁺ 為弱酸', nature:'弱酸性', group:'acid', mode:'weakAcid', K:4.7e-13, equation:'[Mg(H₂O)₆]²⁺ + H₂O ⇌ [Mg(H₂O)₅OH]⁺ + H₃O⁺', lines:['MgCl₂ 解離為 Mg²⁺ 與 2Cl⁻。','Cl⁻ 為強酸 HCl 的共軛鹼，水解可忽略；Mg²⁺ 在水中以水合離子存在。','{{eq}}，水合 Mg²⁺ 促使配位水釋出質子，因此溶液呈弱酸性。','本頁以 pKₐ ≈ 12.33 進行理想溶液估算；實際 pH 對活性與離子強度很敏感。'] },
+      { id:'naac', formula:'CH₃COONa', name:'醋酸鈉', type:'正鹽', source:'弱酸＋強鹼', nature:'鹼性', group:'basic', mode:'weakBase', K:5.6e-10, equation:'CH₃COO⁻ + H₂O ⇌ CH₃COOH + OH⁻', lines:['CH₃COONa 解離為 Na⁺ 與 CH₃COO⁻。','Na⁺ 不水解；CH₃COO⁻ 是弱酸 CH₃COOH 的共軛鹼。','{{eq}}，產生 OH⁻，所以呈鹼性。'] },
+      { id:'mgac2', formula:'Mg(CH₃COO)₂', name:'醋酸鏂', type:'正鹽', source:'Mg²⁺ 與 CH₃COO⁻ 皆可水解', nature:'弱鹼性', group:'basic', mode:'weakBase', K:5.6e-10, factor:2, equation:'CH₃COO⁻ + H₂O ⇌ CH₃COOH + OH⁻', lines:['Mg(CH₃COO)₂ 解離為 Mg²⁺ 與 2CH₃COO⁻。','Mg²⁺ 的水合離子可呈弱酸性；CH₃COO⁻ 則水解產生 OH⁻，兩方效應要比較。','CH₃COO⁻ 的 Kᵇ 約 5.6×10⁻¹⁰，大於水合 Mg²⁺ 的 Kₐ 約 4.7×10⁻¹³，且每單位鹽有 2 個醋酸根，因此鹼性效應占優。','{{eq}}。pH 以陰離子水解的第一近似估算。'] },
+      { id:'na2co3', formula:'Na₂CO₃', name:'碳酸鈉', type:'正鹽', source:'弱酸＋強鹼', nature:'鹼性', group:'basic', mode:'weakBase', K:2.1e-4, equation:'CO₃²⁻ + H₂O ⇌ HCO₃⁻ + OH⁻', lines:['Na₂CO₃ 解離為 Na⁺ 與 CO₃²⁻。','CO₃²⁻ 是弱酸 HCO₃⁻ 的共軛鹼，其水解不可忽略。','{{eq}}，產生 OH⁻，所以呈明顯鹼性。'] },
+      { id:'nahco3', formula:'NaHCO₃', name:'碳酸氫鈉', type:'酸式鹽', source:'多質子弱酸＋強鹼', nature:'弱鹼性', group:'basic', mode:'fixed', ph:8.34, lines:['NaHCO₃ 解離為 Na⁺ 與兩性的 HCO₃⁻。','HCO₃⁻ 可給出 H⁺，也可從水接受 H⁺；要比較兩個方向。','以 pH ≈ ½(pKₐ₁ + pKₐ₂) 估算約為 8.34，因此虽是酸式鹽，溶液卻呈弱鹼性。'] },
+      { id:'nah2po4', formula:'NaH₂PO₄', name:'磷酸二氫鈉', type:'酸式鹽', source:'多質子弱酸＋強鹼', nature:'酸性', group:'acid', mode:'fixed', ph:4.68, lines:['NaH₂PO₄ 解離後，H₂PO₄⁻ 同時可當酸與鹼。','對 H₂PO₄⁻ 而言，給出 H⁺ 的傾向大於從水接受 H⁺ 的傾向。','以 pH ≈ ½(pKₐ₁ + pKₐ₂) 估算約為 4.68，所以呈酸性。'] },
+      { id:'nahs', formula:'NaHS', name:'硫氫化鈉', type:'酸式鹽', source:'多質子弱酸＋強鹼', nature:'鹼性', group:'basic', mode:'fixed', ph:9.95, lines:['NaHS 解離為 Na⁺ 與 HS⁻，其中 HS⁻ 是兩性離子。','HS⁻ 可繼續解離生成 S²⁻ 與 H₃O⁺，也可從水接受質子而生成 H₂S 與 OH⁻。','HS⁻ 接受質子的效應較占優，以 pH ≈ ½(pKₐ₁ + pKₐ₂) 估算約為 9.95，所以呈鹼性。'] },
+      { id:'nh4ac', formula:'NH₄CH₃COO', name:'醋酸銨', type:'正鹽', source:'弱酸＋弱鹼', nature:'接近中性', group:'neutral', mode:'neutral', lines:['解離後，NH₄⁺ 與 CH₃COO⁻ 都會水解。','NH₄⁺ 的 Kₐ 與 CH₃COO⁻ 的 Kᵇ 數值接近，酸性與鹼性效應大致相當。','在理想近似下，25 °C 時 pH 接近 7。'] },
+      { id:'nh4no2', formula:'NH₄NO₂', name:'亞硝酸銨', type:'正鹽', source:'弱酸＋弱鹼', nature:'弱酸性', group:'acid', mode:'fixed', ph:6.30, lines:['NH₄NO₂ 解離為 NH₄⁺ 與 NO₂⁻，兩個離子都會水解。','NH₄⁺ 的 Kₐ 約 5.6×10⁻¹⁰；若取 HNO₂ 的 pKₐ ≈ 3.35，則 NO₂⁻ 的 Kᵇ 約 2.2×10⁻¹¹。','Kₐ(NH₄⁺) > Kᵇ(NO₂⁻)，產生 H₃O⁺ 的效應較強，因此呈弱酸性。','理想近似：pH ≈ 7 + ½ log[Kᵇ(NO₂⁻)/Kₐ(NH₄⁺)] ≈ 6.30。'] }
+    ];
+
+    // 以字碼指定「鏂」，避免雲端同步時被誤寫成外形相近字。
+    salts.find(s => s.id === 'mgcl2').name = '氯化' + String.fromCodePoint(0x9382);
+
+    const select = document.querySelector('#salt-select');
+    const slider = document.querySelector('#conc-slider');
+    const label = document.querySelector('#conc-label');
+    const filters = document.querySelectorAll('.segment');
+    let activeFilter = 'all';
+
+    function concentration() { return 10 ** Number(slider.value); }
+    function solveHydrolysis(K, C) {
+      const Kw = 1e-14;
+      let low = 1e-14, high = 1;
+      for (let i = 0; i < 100; i++) {
+        const mid = Math.sqrt(low * high);
+        const f = mid - Kw / mid - K * C / (mid + K);
+        if (f > 0) high = mid; else low = mid;
+      }
+      return Math.sqrt(low * high);
+    }
+    function phFor(salt) {
+      const C = concentration();
+      if (salt.mode === 'neutral') return 7;
+      if (salt.mode === 'fixed') return salt.ph;
+      const x = solveHydrolysis(salt.K, C * (salt.factor || 1));
+      return salt.mode === 'weakAcid' ? -Math.log10(x) : 14 + Math.log10(x);
+    }
+    function populate() {
+      const previous = select.value;
+      const list = salts.filter(s => activeFilter === 'all' || s.group === activeFilter);
+      select.innerHTML = list.map(s => `<option value="${s.id}">${s.formula} · ${s.name}</option>`).join('');
+      if (list.some(s => s.id === previous)) select.value = previous;
+      renderSalt();
+    }
+    function renderSalt() {
+      const salt = salts.find(s => s.id === select.value) || salts[0];
+      const ph = Math.max(0, Math.min(14, phFor(salt)));
+      document.querySelector('#salt-formula').textContent = salt.formula;
+      document.querySelector('#salt-name').textContent = salt.name;
+      document.querySelector('#salt-type').textContent = salt.type;
+      document.querySelector('#salt-source').textContent = salt.source;
+      document.querySelector('#salt-nature').textContent = salt.nature;
+      document.querySelector('#ph-value').textContent = ph.toFixed(2);
+      document.querySelector('#ph-marker').style.left = `${ph / 14 * 100}%`;
+      document.querySelector('#reasoning').innerHTML = salt.lines.map(line => `<li>${line.replace('{{eq}}', salt.equation || '')}</li>`).join('');
+      const C = concentration();
+      label.textContent = `${C < .01 ? C.toFixed(3) : C < 1 ? C.toFixed(2) : C.toFixed(1)} mol/L`;
+    }
+    select.addEventListener('change', renderSalt);
+    slider.addEventListener('input', renderSalt);
+    filters.forEach(btn => btn.addEventListener('click', () => {
+      filters.forEach(b => b.classList.remove('active')); btn.classList.add('active'); activeFilter = btn.dataset.filter; populate();
+    }));
+    populate();
+
+    const questions = [
+      { q:'0.10 M NH₄Cl(aq) 為何呈酸性？', opts:['Cl⁻ 釋出 H⁺','NH₄⁺ 水解產生 H₃O⁺','NH₄Cl 是酸式鹽'], a:1, why:'NH₄⁺ 是弱鹼 NH₃ 的共軛酸，會水解產生 H₃O⁺；Cl⁻ 的水解可忽略。' },
+      { q:'下列哪一種酸式鹽的水溶液通常呈弱鹼性？', opts:['NaHCO₃','NaH₂PO₄','NaHSO₄'], a:0, why:'HCO₃⁻ 虽然可給出 H⁺，但其接受 H⁺、產生 OH⁻ 的效應較占優。' },
+      { q:'判斷弱酸弱鹼鹽的水溶液酸鹼性，最關鍵的作法是？', opts:['看化學式中 H 的個數','比較陽離子的 Kₐ 與陰離子的 Kᵇ','看鹽的摩爾質量'], a:1, why:'兩個離子都可能水解，要比較產生 H₃O⁺ 與 OH⁻ 的相對傾向。' },
+      { q:'CH₃COONa(aq) 中會明顯水解的離子是？', opts:['Na⁺','CH₃COO⁻','Na⁺ 和 CH₃COO⁻ 都不會'], a:1, why:'CH₃COO⁻ 是弱酸的共軛鹼，與水反應可產生 OH⁻。' },
+      { q:'對 0.10 M NaCl(aq) 的敘述，哪一項最恰當？', opts:['NaCl 分子不解離','Na⁺ 與 Cl⁻ 會完全中和','兩離子的水解均可忽略，pH 約為 7'], a:2, why:'NaCl 會解離，但 Na⁺ 與 Cl⁻ 皆可視為旁觀離子，25 °C 時溶液接近中性。' },
+      { q:'NaH₂PO₄(aq) 與 NaHS(aq) 都是酸式鹽，為何前者呈酸性而後者呈鹼性？', opts:['兩者的陰離子授質子、受質子的相對傾向不同','NaHS 不會解離','NaH₂PO₄ 不是鹽'], a:0, why:'H₂PO₄⁻ 與 HS⁻ 都是兩性離子，但前者授質子效應較占優，後者受質子、產生 OH⁻ 的效應較占優。' },
+      { q:'下列何者是「組成分類」，不能單獨用來斷定水溶液酸鹼性？', opts:['酸式鹽','Kₐ','Kᵇ'], a:0, why:'酸式鹽只說明陰離子仍含可解離的氫；其水溶液可能呈酸性或鹼性。' },
+      { q:'理想近似下，NH₄CH₃COO(aq) 為何接近中性？', opts:['兩個離子都不水解','Kₐ(NH₄⁺) 與 Kᵇ(CH₃COO⁻) 數值接近','因為它是強酸強鹼鹽'], a:1, why:'NH₄⁺ 與 CH₃COO⁻ 均水解，但酸性與鹼性影響相近，所以 pH 接近 7。' },
+      { q:'MgCl₂(aq) 呈弱酸性的主要原因是？', opts:['Cl⁻ 水解產生 H₃O⁺','水合 Mg²⁺ 促使配位水釋出質子','MgCl₂ 中含有隱藏的 H⁺'], a:1, why:'Mg²⁺ 在水中形成水合離子，使配位水的 O-H 鍵更易解離；Cl⁻ 的水解可忽略。' },
+      { q:'為何鹼化近似下 Mg(CH₃COO)₂(aq) 呈弱鹼性？', opts:['醋酸根的鹼性效應大於水合 Mg²⁺ 的酸性效應','Mg²⁺ 直接釋出 OH⁻','所有醋酸鹽都必定呈強鹼性'], a:0, why:'CH₃COO⁻ 的 Kᵇ 明顯大於水合 Mg²⁺ 的 Kₐ，而且每單位鹽含 2 個醋酸根。' },
+      { q:'NH₄NO₂(aq) 呈弱酸性，正確的判斷依據是？', opts:['Kₐ(NH₄⁺) > Kᵇ(NO₂⁻)','NO₂⁻ 完全不水解','NH₄NO₂ 是酸式鹽'], a:0, why:'NH₄⁺ 與 NO₂⁻ 都會水解，但陽離子的酸性常數較大，所以酸性效應占優。' }
+    ];
+
+    const quizLength = 6;
+    let order = [], qi = 0, score = 0, answered = false;
+    const qEl = document.querySelector('#question'), optsEl = document.querySelector('#options'), fbEl = document.querySelector('#feedback'), nextBtn = document.querySelector('#next-btn');
+    function shuffle(array) { return [...array].sort(() => Math.random() - .5); }
+    function startQuiz() {
+      order = shuffle(questions).slice(0, quizLength); qi = 0; score = 0; answered = false;
+      document.querySelector('#quiz-play').style.display = 'block'; document.querySelector('#final-score').classList.remove('show'); renderQuestion();
+    }
+    function renderQuestion() {
+      answered = false; const item = order[qi];
+      document.querySelector('#quiz-count').textContent = `第 ${qi + 1} / ${quizLength} 題`;
+      document.querySelector('#score-label').textContent = `${score} 分`;
+      document.querySelector('#progress-bar').style.width = `${qi / quizLength * 100}%`;
+      qEl.textContent = item.q; fbEl.className = 'feedback'; fbEl.innerHTML = ''; nextBtn.hidden = true;
+      optsEl.innerHTML = item.opts.map((o,i) => `<button class="option" data-index="${i}" data-letter="${String.fromCharCode(65+i)}">${o}</button>`).join('');
+      optsEl.querySelectorAll('.option').forEach(btn => btn.addEventListener('click', choose));
+    }
+    function choose(event) {
+      if (answered) return; answered = true; const item = order[qi], picked = Number(event.currentTarget.dataset.index), good = picked === item.a;
+      if (good) score += 10;
+      optsEl.querySelectorAll('.option').forEach((btn,i) => { btn.disabled = true; if (i === item.a) btn.classList.add('correct'); else if (i === picked) btn.classList.add('wrong'); });
+      fbEl.innerHTML = `<strong>${good ? '✅ 判斷正確' : '💡 再查一次線索'}</strong>${item.why}`; fbEl.classList.add('show');
+      document.querySelector('#score-label').textContent = `${score} 分`; document.querySelector('#progress-bar').style.width = `${(qi+1) / quizLength * 100}%`;
+      nextBtn.textContent = qi === quizLength - 1 ? '查看結果' : '下一題 →'; nextBtn.hidden = false;
+    }
+    nextBtn.addEventListener('click', () => { if (qi < quizLength - 1) { qi++; renderQuestion(); } else finishQuiz(); });
+    function finishQuiz() {
+      document.querySelector('#quiz-play').style.display = 'none'; const final = document.querySelector('#final-score'); final.classList.add('show');
+      const pct = score / (quizLength * 10) * 100; const ring = document.querySelector('#score-ring'); ring.style.setProperty('--score', `${pct}%`);
+      document.querySelector('#score-number').textContent = `${score}/${quizLength*10}`;
+      document.querySelector('#score-title').textContent = pct >= 80 ? '金牌離子偵探！' : pct >= 60 ? '已掌握主要線索' : '再回實驗台查一輪';
+      document.querySelector('#score-message').textContent = pct >= 80 ? '你已能用水解觀點解釋鹽溶液的酸鹼性。' : '重點複習：先拆離子，再找共軛酸鹼，最後比較水解傾向。';
+      updateCertificateRecipient();
+    }
+    const studentNameInput = document.querySelector('#student-name');
+    const certificateStatus = document.querySelector('#certificate-status');
+    function updateCertificateRecipient() {
+      const name = studentNameInput.value.trim();
+      document.querySelector('#certificate-recipient').textContent = name ? `挑戰者：${name}` : '請在上方填寫姓名後下載證書';
+      certificateStatus.textContent = '';
+    }
+    studentNameInput.addEventListener('input', updateCertificateRecipient);
+
+    function drawCertificate(name) {
+      const canvas = document.createElement('canvas');
+      canvas.width = 1600; canvas.height = 1100;
+      const ctx = canvas.getContext('2d');
+      const center = canvas.width / 2;
+      ctx.fillStyle = '#f7f2e4'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.strokeStyle = '#12344c'; ctx.lineWidth = 28; ctx.strokeRect(38, 38, canvas.width - 76, canvas.height - 76);
+      ctx.strokeStyle = '#00a6a6'; ctx.lineWidth = 5; ctx.strokeRect(72, 72, canvas.width - 144, canvas.height - 144);
+      ctx.fillStyle = '#12344c'; ctx.textAlign = 'center';
+      ctx.font = '900 44px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText('離 子 偵 探 所', center, 170);
+      ctx.fillStyle = '#ee6c4d'; ctx.font = '800 30px sans-serif'; ctx.fillText('CHEMISTRY CHALLENGE', center, 225);
+      ctx.fillStyle = '#12344c'; ctx.font = '900 78px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText('挑戰完成證書', center, 345);
+      ctx.fillStyle = '#60788a'; ctx.font = '32px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText('茲 證 明', center, 425);
+      ctx.fillStyle = '#087d7c'; ctx.font = '900 68px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText(name, center, 515);
+      ctx.strokeStyle = '#f2b84b'; ctx.lineWidth = 5; ctx.beginPath(); ctx.moveTo(430, 545); ctx.lineTo(1170, 545); ctx.stroke();
+      ctx.fillStyle = '#163044'; ctx.font = '36px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText('已完成「鹽類酸鹼性鑑識挑戰」', center, 625);
+      ctx.font = '900 58px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText(`挑戰成績  ${score} / ${quizLength * 10}`, center, 715);
+      const pct = score / (quizLength * 10) * 100;
+      const level = pct >= 80 ? '金牌離子偵探' : pct >= 60 ? '離子線索解讀者' : '離子偵查見習生';
+      ctx.fillStyle = '#ee6c4d'; ctx.font = '800 34px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText(level, center, 780);
+      const date = new Intl.DateTimeFormat('zh-TW', { year:'numeric', month:'long', day:'numeric' }).format(new Date());
+      ctx.fillStyle = '#60788a'; ctx.font = '28px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText(`完成日期：${date}`, center, 890);
+      ctx.fillStyle = '#12344c'; ctx.beginPath(); ctx.arc(185, 895, 70, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#f2b84b'; ctx.font = '900 48px Georgia, serif'; ctx.fillText('⊕', 185, 912);
+      ctx.textAlign = 'right'; ctx.fillStyle = '#12344c'; ctx.font = '800 26px "PingFang TC", "Microsoft JhengHei", sans-serif'; ctx.fillText('高中化學 · 酸鹼平衡', 1420, 955);
+      return canvas;
+    }
+    document.querySelector('#download-certificate').addEventListener('click', () => {
+      const name = studentNameInput.value.trim();
+      if (!name) {
+        certificateStatus.textContent = '請先輸入姓名，才能產生挑戰證書。';
+        studentNameInput.focus();
+        return;
+      }
+      const canvas = drawCertificate(name);
+      const link = document.createElement('a');
+      const safeName = name.replace(/[\\/:*?"<>|]/g, '-');
+      link.download = `鹽類挑戰證書-${safeName}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      certificateStatus.textContent = '證書已產生，請查看瀏覽器的下載項目。';
+    });
+    document.querySelector('#restart-btn').addEventListener('click', startQuiz);
+    startQuiz();
+  </script>
+</body>
+</html>
