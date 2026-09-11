@@ -14,11 +14,16 @@ const [dataSource, clientHtml, hostHtml, clientJs, hostJs, rules] = await Promis
 const data = await import(new URL('js/parent-meeting-data.js', root).href);
 
 assert.equal(data.QUESTIONS.length, 6, 'must include six scenarios');
+assert.equal(data.CONTENT_VERSION, 2, 'content version must change when option keys change');
 assert.equal(new Set(data.QUESTIONS.map(question => question.id)).size, 6, 'question ids must be unique');
 for (const question of data.QUESTIONS) {
   assert.deepEqual(question.options.map(option => option.key), ['A', 'B', 'C', 'D']);
   assert.ok(question.suggestion, `${question.id} needs a suggested response`);
 }
+const preferredKeys = data.QUESTIONS.map(question =>
+  question.options.find(option => option.label === '支持＋界線')?.key
+);
+assert.ok(new Set(preferredKeys).size >= 3, 'support-and-boundary choices should not use a predictable letter');
 
 assert.match(dataSource, /在科學班真的好累/);
 assert.match(dataSource, /我就爛/);

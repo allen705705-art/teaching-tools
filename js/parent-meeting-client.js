@@ -3,7 +3,7 @@ import {
   getFirestore, doc, getDoc, setDoc, onSnapshot, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import {
-  APP_TITLE, APP_SUBTITLE, FIREBASE_CONFIG, QUESTIONS, CLOSING_ACTIONS,
+  APP_TITLE, APP_SUBTITLE, CONTENT_VERSION, FIREBASE_CONFIG, QUESTIONS, CLOSING_ACTIONS,
   OPTION_STYLES, normalizeSessionCode, makeParticipantId
 } from './parent-meeting-data.js';
 
@@ -55,6 +55,9 @@ async function joinSession() {
     const sessionRef = doc(db, 'parent_meeting_sessions', code);
     const snapshot = await getDoc(sessionRef);
     if (!snapshot.exists()) throw new Error('找不到這場活動，請確認代碼。');
+    if (snapshot.data().contentVersion !== CONTENT_VERSION) {
+      throw new Error('題目內容已更新，請向主持人索取新的活動代碼。');
+    }
 
     sessionCode = code;
     sessionStorage.setItem('parentMeetingSessionCode', code);

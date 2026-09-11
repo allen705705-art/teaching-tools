@@ -4,7 +4,7 @@ import {
   getDocs, deleteDoc, writeBatch, serverTimestamp
 } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 import {
-  APP_TITLE, FIREBASE_CONFIG, QUESTIONS, OPTION_STYLES, normalizeSessionCode
+  APP_TITLE, CONTENT_VERSION, FIREBASE_CONFIG, QUESTIONS, OPTION_STYLES, normalizeSessionCode
 } from './parent-meeting-data.js';
 
 const app = initializeApp(FIREBASE_CONFIG);
@@ -55,6 +55,7 @@ async function createSession() {
 
     await setDoc(doc(db, 'parent_meeting_sessions', code), {
       title: APP_TITLE,
+      contentVersion: CONTENT_VERSION,
       questionIndex: 0,
       phase: 'lobby',
       results: null,
@@ -78,6 +79,9 @@ async function resumeSession() {
   try {
     const snapshot = await getDoc(doc(db, 'parent_meeting_sessions', code));
     if (!snapshot.exists()) throw new Error('找不到這場活動。');
+    if (snapshot.data().contentVersion !== CONTENT_VERSION) {
+      throw new Error('這是更新前的活動，請建立新活動以使用新的選項順序。');
+    }
     connectDashboard(code);
   } catch (error) {
     setSetupMessage(error.message || '讀取失敗，請稍後再試。', true);
