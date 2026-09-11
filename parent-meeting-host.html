@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f8f5ee">
+  <title>高二家長會｜主持人控制台</title>
+  <link rel="stylesheet" href="css/parent-meeting.css">
+</head>
+<body>
+  <div class="site-shell">
+    <header class="topbar">
+      <div class="brand">家長會主持人控制台<small>陪伴・界線・責任</small></div>
+      <div class="status-pill warn" id="connectionStatus" aria-live="polite"><span class="status-dot"></span><span>尚未建立活動</span></div>
+    </header>
+
+    <main class="page narrow" id="setupView">
+      <section class="card hero-card">
+        <p class="eyebrow">主持人入口</p>
+        <h1>建立即時互動活動</h1>
+        <p class="lead">系統會產生 6 碼活動代碼與家長加入連結。所有作答均為匿名。</p>
+        <div class="button-row">
+          <button class="btn btn-primary btn-large" id="createButton">建立新活動</button>
+        </div>
+        <div class="field">
+          <label for="resumeCodeInput">或接續既有活動</label>
+          <input class="code-input" id="resumeCodeInput" maxlength="6" placeholder="輸入活動代碼">
+        </div>
+        <div class="button-row"><button class="btn btn-outline btn-large" id="resumeButton">接續活動</button></div>
+        <div class="message" id="setupMessage" role="status"></div>
+        <p class="privacy-note">請勿把主持人控制台網址投放給家長。家長只需要 QR Code 或匿名加入連結。</p>
+      </section>
+    </main>
+
+    <main class="page host-page hidden" id="dashboardView">
+      <div class="host-grid">
+        <aside class="card host-sidebar">
+          <p class="eyebrow">家長加入</p>
+          <div class="session-code" id="sessionCode">------</div>
+          <canvas id="qrCanvas" width="190" height="190" aria-label="家長加入 QR Code"></canvas>
+          <div class="join-url" id="joinUrl"></div>
+          <div class="button-row">
+            <button class="btn btn-secondary" id="copyLinkButton">複製連結</button>
+            <button class="btn btn-outline" id="fullscreenButton">全螢幕</button>
+          </div>
+          <div class="metric-row">
+            <div class="metric"><strong id="onlineCount">0</strong><span>目前在線</span></div>
+            <div class="metric"><strong id="answeredCount">0</strong><span>本題已作答</span></div>
+          </div>
+          <p class="privacy-note">在線人數以最近 75 秒內保持連線的裝置估算。</p>
+          <div class="host-footer-actions">
+            <button class="btn btn-outline" id="exportButton">匯出統計</button>
+            <button class="btn btn-danger" id="resetQuestionButton">重設本題</button>
+            <button class="btn btn-danger" id="resetSessionButton">清除整場</button>
+          </div>
+        </aside>
+
+        <section class="card">
+          <div class="session-header">
+            <div>
+              <div class="progress-label" id="questionProgress">情境 1／6</div>
+              <div class="phase-label" id="phaseLabel">等待開始</div>
+            </div>
+            <div class="status-pill" id="phasePill"><span class="status-dot"></span><span>等待中</span></div>
+          </div>
+          <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+          <p class="eyebrow">目前情境</p>
+          <h1 class="host-question" id="questionTitle"></h1>
+          <div id="hostOptions"></div>
+
+          <div class="control-strip">
+            <button class="btn btn-primary" id="openButton">開放作答</button>
+            <button class="btn btn-secondary" id="closeButton">停止作答</button>
+            <button class="btn btn-primary" id="resultsButton">公布統計</button>
+            <button class="btn btn-secondary" id="feedbackButton">顯示解析</button>
+            <button class="btn btn-outline" id="nextButton">下一題</button>
+            <button class="btn btn-outline" id="finishButton">結束活動</button>
+          </div>
+
+          <section class="hidden" id="resultsSection">
+            <p class="eyebrow">已公布統計</p>
+            <div class="bars" id="hostBars"></div>
+            <p class="privacy-note" id="resultSummary"></p>
+          </section>
+
+          <section class="hidden" id="feedbackSection">
+            <h2>各選項回饋</h2>
+            <div id="feedbackCards"></div>
+            <div class="suggestion"><small>可以這樣說</small><p id="suggestionText"></p></div>
+            <div class="safety hidden" id="safetyText"></div>
+          </section>
+        </section>
+      </div>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+  <script type="module" src="js/parent-meeting-host.js"></script>
+</body>
+</html>
