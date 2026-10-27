@@ -16,6 +16,7 @@ const { pathToFileURL } = require('url');
   if(await page.locator('.process-card').count()!==3) throw new Error('應保留三個實驗區塊');
   if(await page.locator('.card-expand').count()!==3) throw new Error('三個實驗區塊皆需可個別放大');
   if(await page.locator('body > main').isVisible()) throw new Error('舊三站教材不應顯示');
+  if(await page.locator('#processDialog .practice-card').count()!==5) throw new Error('反應數線後方應有五題練習');
 
   const axisLabels=await page.locator('.process-axis .axis-mark').allInnerTexts();
   if(axisLabels.some(label=>label.includes('+1 滴')||label.includes('過量一滴'))) throw new Error('數線上不應顯示過量一滴提示');
@@ -86,8 +87,19 @@ const { pathToFileURL } = require('url');
   if((await page.locator('#indirectVolumeLabel').innerText())!=='當量點') throw new Error('間接滴定當量點狀態錯誤');
   if((await page.locator('#indirectSwatch').evaluate(el=>getComputedStyle(el).backgroundColor))!=='rgb(247, 244, 233)') throw new Error('間接滴定當量點應呈無色');
 
+  const choiceAnswers=['chloride','pale-pink','near-endpoint'];
+  for(const answer of choiceAnswers) await page.locator(`.practice-card[data-answer="${answer}"] .practice-choice[data-value="${answer}"]`).click();
+  const numberCards=page.locator('.practice-card[data-practice="number"]');
+  await numberCards.nth(0).locator('input').fill('0.250');await numberCards.nth(0).locator('.practice-check').click();
+  await numberCards.nth(1).locator('input').fill('0.384');await numberCards.nth(1).locator('.practice-check').click();
+  if((await page.locator('#practiceScore').innerText())!=='5') throw new Error('五題全對後分數應為 5');
+  if((await page.locator('.practice-progress').getAttribute('aria-valuenow'))!=='5') throw new Error('練習進度應更新為 5');
+  if(await page.locator('.practice-card.is-correct').count()!==5) throw new Error('五題答對狀態未完整顯示');
+  await page.locator('#resetPractice').click();
+  if((await page.locator('#practiceScore').innerText())!=='0') throw new Error('重設後分數應歸零');
+
   if(errors.length) throw new Error('Console errors: '+errors.join(' | '));
   await page.screenshot({path:path.join(__dirname,'process-preview.png'),fullPage:true});
   await browser.close();
-  console.log('PASS: standalone reaction number line, 3 expandable experiment cards, chemistry interactions, no console errors');
+  console.log('PASS: standalone reaction number line, 3 expandable experiment cards, 5 practice questions, chemistry interactions, no console errors');
 })().catch(error=>{console.error(error.stack||error);process.exit(1)});

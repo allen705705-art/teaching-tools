@@ -113,6 +113,31 @@
     .takeaway{margin-top:30px;padding:26px;border-radius:24px;background:#eddba8;display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:start}
     .takeaway .badge{width:50px;height:50px;display:grid;place-items:center;border-radius:15px;background:#1c3f34;color:white;font-size:25px}
     .takeaway h3{margin:0 0 6px}.takeaway p{margin:0;line-height:1.7;color:#554b35}
+    .practice-section{margin-top:70px;padding:42px clamp(18px,4vw,44px) 28px;border-top:1px solid #cec7b8;background:#f2eee4;scroll-margin-top:86px}
+    .practice-head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:22px}
+    .practice-head p{max-width:700px;margin:8px 0 0;color:var(--muted);line-height:1.7}
+    .practice-score{flex:0 0 auto;min-width:170px;padding:16px 18px;border-radius:18px;background:var(--green-dark);color:white;text-align:center}
+    .practice-score small{display:block;color:#bfe4d4;font-weight:800}
+    .practice-score b{display:block;margin-top:2px;color:var(--lime);font-size:30px}
+    .practice-progress{height:8px;margin:0 0 22px;border-radius:8px;background:#d8d1c2;overflow:hidden}
+    .practice-progress span{display:block;width:0;height:100%;border-radius:8px;background:linear-gradient(90deg,var(--green),var(--amber));transition:width .3s ease}
+    .practice-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+    .practice-card{padding:22px;border:1px solid #ded7c9;border-radius:22px;background:var(--paper);box-shadow:0 10px 28px rgba(31,42,36,.08)}
+    .practice-card.is-correct{border-color:#83b7a1;background:#f4fbf7}
+    .practice-number{display:inline-grid;place-items:center;width:34px;height:34px;margin-bottom:12px;border-radius:50%;background:#d9e9e1;color:var(--green-dark);font-weight:900}
+    .practice-card h3{margin:0 0 8px;font-size:18px;line-height:1.5;color:var(--ink)}
+    .practice-card .prompt{min-height:48px;margin:0 0 14px;color:#46534c;line-height:1.65}
+    .practice-options{display:grid;gap:8px}
+    .practice-choice{width:100%;padding:10px 12px;border:1px solid #c9c2b5;border-radius:12px;background:white;color:var(--ink);text-align:left;line-height:1.45}
+    .practice-choice:hover:not(:disabled){border-color:var(--green)}
+    .practice-choice.is-wrong{border-color:#d69b94;background:#fff0ed;color:#8f312a}
+    .practice-choice.is-correct{border-color:var(--green);background:#e5f3ed;color:var(--green-dark);font-weight:900}
+    .practice-choice:disabled{cursor:default;opacity:.72}
+    .practice-input{display:flex;gap:9px;align-items:stretch}
+    .practice-input input{flex:1;min-width:0}
+    .practice-feedback{min-height:45px;margin-top:12px;color:var(--muted);font-size:14px;line-height:1.55}
+    .practice-feedback.good{color:var(--green-dark);font-weight:800}.practice-feedback.bad{color:var(--red);font-weight:800}
+    .practice-actions{display:flex;justify-content:center;margin-top:22px}
     footer{text-align:center;color:#7b776d;font-size:13px;padding:24px}
     .toast{position:fixed;left:50%;bottom:28px;z-index:30;transform:translate(-50%,120px);opacity:0;background:#193c31;color:#fff;padding:12px 18px;border-radius:999px;box-shadow:var(--shadow);transition:.3s;font-weight:800}
     .toast.show{transform:translate(-50%,0);opacity:1}
@@ -220,7 +245,7 @@
     .process-card.is-expanded .process-observation{grid-template-columns:120px 1fr;padding:22px}
     .process-card.is-expanded .titration-apparatus{transform:scale(1.14);transform-origin:center}
     .process-card.is-expanded .species-row b{font-size:18px}
-    @media(max-width:820px){.hero,.grid{grid-template-columns:1fr}.formula-card{min-height:160px}.lesson-head{display:block}.tag{display:inline-block;margin-top:12px}.station-tab small{display:none}.ratio-rail{grid-template-columns:1fr}.ratio-arrow{transform:rotate(90deg)}.top-actions .label{display:none}}
+    @media(max-width:820px){.hero,.grid,.practice-grid{grid-template-columns:1fr}.formula-card{min-height:160px}.lesson-head{display:block}.tag{display:inline-block;margin-top:12px}.station-tab small{display:none}.ratio-rail{grid-template-columns:1fr}.ratio-arrow{transform:rotate(90deg)}.top-actions .label{display:none}.practice-head{align-items:stretch;flex-direction:column}.practice-score{width:100%}.practice-card .prompt{min-height:0}}
     @media(max-width:1100px){.process-grid{grid-template-columns:repeat(3,minmax(330px,1fr))}}
     @media(max-width:900px){.map-body{grid-template-columns:1fr}.graph-stage{min-width:700px}.map-detail{border-left:0;border-top:1px solid var(--line)}.map-dialog{overflow:auto}.map-shell{max-height:none}.map-body{overflow:visible}.map-head{position:sticky;top:0;z-index:4}.process-card{min-width:330px}}
     @media(max-width:520px){h1{font-size:44px}.topbar{padding:11px 14px}.brand{font-size:14px}.brand-mark{width:30px;height:30px}.lesson-nav button{min-width:0;flex:1}.controls{grid-template-columns:1fr}.answer-row{flex-wrap:wrap}.answer-row input{flex-basis:100%}.takeaway{grid-template-columns:1fr}.ratio-node{min-height:70px}}
@@ -375,7 +400,73 @@
           <div class="takeaway"><div class="badge">↗</div><div><h3>看到間接滴定，先找「橋樑物質」</h3><p>本組題的橋樑是 I₂。不要把兩個反應的係數硬背在一起；逐段走，單位會帶你到答案。</p></div></div>
         </aside>
       </div>
-      <div class="lesson-nav"><button class="ghost prev" data-prev="1">← 回漂白水</button><button class="primary" id="finishBtn">完成三站 ✓</button></div>
+      <div class="lesson-nav"><button class="ghost prev" data-prev="1">← 回漂白水</button><button class="primary" id="finishBtn">前往五題練習 →</button></div>
+    </section>
+
+    <section class="practice-section" id="practice" aria-labelledby="practiceTitle">
+      <header class="practice-head">
+        <div>
+          <div class="lesson-kicker">課後練習｜觀察、操作、化學計量</div>
+          <h2 id="practiceTitle">五題，把三條數線真正連起來</h2>
+          <p>先判斷滴定方法與顏色訊號，再完成兩題新數據計算。每題可立即檢查，答對後會顯示關鍵推理。</p>
+        </div>
+        <div class="practice-score" aria-live="polite"><small>目前答對</small><b><span id="practiceScore">0</span>／5</b></div>
+      </header>
+      <div class="practice-progress" role="progressbar" aria-label="練習完成度" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><span id="practiceProgress"></span></div>
+      <div class="practice-grid">
+        <article class="practice-card" data-practice="choice" data-answer="chloride">
+          <span class="practice-number">1</span>
+          <h3>過錳酸鉀滴定的酸如何選？</h3>
+          <p class="prompt">酸性條件通常使用 H₂SO₄，而避免使用 HCl，主要原因是什麼？</p>
+          <div class="practice-options">
+            <button class="practice-choice" data-value="chloride">Cl⁻ 可能被 MnO₄⁻ 氧化，額外消耗滴定劑</button>
+            <button class="practice-choice" data-value="weak">HCl 酸性不夠強，不能提供 H⁺</button>
+            <button class="practice-choice" data-value="indicator">H₂SO₄ 會形成紫色指示劑</button>
+          </div>
+          <div class="practice-feedback" aria-live="polite">選出不使用鹽酸的化學原因。</div>
+        </article>
+
+        <article class="practice-card" data-practice="choice" data-answer="pale-pink">
+          <span class="practice-number">2</span>
+          <h3>辨認 KMnO₄ 滴定終點</h3>
+          <p class="prompt">SO₃²⁻ 的過錳酸鉀直接滴定，哪一個現象最接近正確終點？</p>
+          <div class="practice-options">
+            <button class="practice-choice" data-value="purple">溶液呈明顯深紫色</button>
+            <button class="practice-choice" data-value="pale-pink">淡粉紅色持續約 30 秒</button>
+            <button class="practice-choice" data-value="blue">加入澱粉後深藍色消失</button>
+          </div>
+          <div class="practice-feedback" aria-live="polite">想一想：KMnO₄ 能不能自己指示終點？</div>
+        </article>
+
+        <article class="practice-card" data-practice="choice" data-answer="near-endpoint">
+          <span class="practice-number">3</span>
+          <h3>澱粉應在何時加入？</h3>
+          <p class="prompt">以 S₂O₃²⁻ 滴定 I₂ 時，最適當的澱粉加入時機為何？</p>
+          <div class="practice-options">
+            <button class="practice-choice" data-value="start">滴定開始、I₂ 濃度最高時</button>
+            <button class="practice-choice" data-value="near-endpoint">接近當量點、溶液呈淡黃色時</button>
+            <button class="practice-choice" data-value="after">超過當量點、溶液無色後</button>
+          </div>
+          <div class="practice-feedback" aria-live="polite">考慮大量 I₂ 與澱粉強烈作用對終點的影響。</div>
+        </article>
+
+        <article class="practice-card" data-practice="number" data-answer="0.250" data-tolerance="0.0006">
+          <span class="practice-number">4</span>
+          <h3>新數據：直接滴定</h3>
+          <p class="prompt">0.0800 M KMnO₄ 25.0 mL 恰好滴定 20.0 mL Na₂SO₃。已知 MnO₄⁻：SO₃²⁻＝2：5，求 Na₂SO₃ 的濃度（M）。</p>
+          <div class="practice-input"><input type="number" step="0.001" inputmode="decimal" placeholder="輸入濃度" aria-label="第四題 Na2SO3 濃度"><button class="primary practice-check">檢查</button></div>
+          <div class="practice-feedback" aria-live="polite">提示：先算 KMnO₄ 莫耳數，再乘 5／2。</div>
+        </article>
+
+        <article class="practice-card" data-practice="number" data-answer="0.384" data-tolerance="0.0006">
+          <span class="practice-number">5</span>
+          <h3>新數據：間接碘量法</h3>
+          <p class="prompt">含 Br₂ 的試樣與過量 KI 反應，生成的 I₂ 用 0.150 M Na₂S₂O₃ 32.0 mL 滴定。求原試樣中 Br₂ 的質量（g；Br＝80）。</p>
+          <div class="practice-input"><input type="number" step="0.001" inputmode="decimal" placeholder="輸入質量" aria-label="第五題 Br2 質量"><button class="primary practice-check">檢查</button></div>
+          <div class="practice-feedback" aria-live="polite">提示：Br₂：I₂：S₂O₃²⁻＝1：1：2。</div>
+        </article>
+      </div>
+      <div class="practice-actions"><button class="ghost" id="resetPractice">重新作答五題</button></div>
     </section>
   </main>
   <dialog class="map-dialog" id="mapDialog" aria-labelledby="mapTitle">
@@ -504,6 +595,8 @@
     const state={station:0,done:new Set(),hint:0};
     const lessons=[...document.querySelectorAll('.lesson')];
     const tabs=[...document.querySelectorAll('.station-tab')];
+    const practiceSection=document.querySelector('#practice');
+    document.querySelector('#processDialog .map-legend').before(practiceSection);
     const toast=document.querySelector('#toast');
     function showToast(message){toast.textContent=message;toast.classList.add('show');clearTimeout(showToast.t);showToast.t=setTimeout(()=>toast.classList.remove('show'),2200)}
     function showStation(index){
@@ -593,7 +686,47 @@
     }
     document.querySelector('#check3').addEventListener('click',checkAnswer);
     document.querySelector('#answer3').addEventListener('keydown',e=>{if(e.key==='Enter')checkAnswer()});
-    document.querySelector('#finishBtn').addEventListener('click',()=>{state.done.add(2);tabs.forEach((el,i)=>el.classList.toggle('done',state.done.has(i)&&i!==state.station));showToast('三題已串成同一條化學計量線！')});
+    document.querySelector('#finishBtn').addEventListener('click',()=>{state.done.add(2);tabs.forEach((el,i)=>el.classList.toggle('done',state.done.has(i)&&i!==state.station));document.querySelector('#practice').scrollIntoView({behavior:'smooth',block:'start'});showToast('三站完成，開始五題練習！')});
+    const practiceCards=[...document.querySelectorAll('.practice-card')];
+    const practiceExplanations={
+      chloride:'正確：Cl⁻ 可能被強氧化劑 MnO₄⁻ 氧化成 Cl₂，使 KMnO₄ 用量偏大；應使用不易被氧化的 H₂SO₄。',
+      'pale-pink':'正確：第一滴微量過量的 MnO₄⁻ 留在溶液中，形成持續約 30 秒的淡粉紅色。',
+      'near-endpoint':'正確：I₂ 已降至少量、溶液呈淡黃色時才加澱粉，可避免終點遲滯。'
+    };
+    function updatePracticeScore(){
+      const score=practiceCards.filter(card=>card.dataset.complete==='true').length;
+      document.querySelector('#practiceScore').textContent=score;
+      const progress=document.querySelector('.practice-progress');progress.setAttribute('aria-valuenow',score);
+      document.querySelector('#practiceProgress').style.width=(score/5*100)+'%';
+      if(score===5)showToast('五題全對！顏色、當量點與化學計量已連結完成。');
+    }
+    function completePractice(card,message){
+      card.dataset.complete='true';card.classList.add('is-correct');
+      const feedback=card.querySelector('.practice-feedback');feedback.className='practice-feedback good';feedback.textContent=message;
+      card.querySelectorAll('button,input').forEach(control=>control.disabled=true);updatePracticeScore();
+    }
+    document.querySelectorAll('.practice-choice').forEach(button=>button.addEventListener('click',()=>{
+      const card=button.closest('.practice-card');if(card.dataset.complete==='true')return;
+      card.querySelectorAll('.practice-choice').forEach(item=>item.classList.remove('is-wrong','is-correct'));
+      const ok=button.dataset.value===card.dataset.answer;
+      button.classList.add(ok?'is-correct':'is-wrong');
+      if(ok)completePractice(card,practiceExplanations[card.dataset.answer]);
+      else{const feedback=card.querySelector('.practice-feedback');feedback.className='practice-feedback bad';feedback.textContent='再想一次：回到數線上的物種與顏色變化判斷。'}
+    }));
+    function checkPracticeNumber(card){
+      if(card.dataset.complete==='true')return;
+      const input=card.querySelector('input'),value=Number(input.value),answer=Number(card.dataset.answer),tolerance=Number(card.dataset.tolerance),feedback=card.querySelector('.practice-feedback');
+      if(!input.value){feedback.className='practice-feedback bad';feedback.textContent='請先輸入數值。';return}
+      if(Math.abs(value-answer)<=tolerance){
+        const message=answer===.25?'正確：0.0800×0.0250×(5／2)÷0.0200＝0.250 M。':'正確：0.150×0.0320÷2×160＝0.384 g。';
+        completePractice(card,message);
+      }else{feedback.className='practice-feedback bad';feedback.textContent=answer===.25?'再檢查 mL→L，以及 MnO₄⁻：SO₃²⁻＝2：5。':'再檢查 mL→L，且 2 mol S₂O₃²⁻ 對應 1 mol Br₂。'}
+    }
+    document.querySelectorAll('.practice-check').forEach(button=>button.addEventListener('click',()=>checkPracticeNumber(button.closest('.practice-card'))));
+    document.querySelectorAll('.practice-card[data-practice="number"] input').forEach(input=>input.addEventListener('keydown',event=>{if(event.key==='Enter')checkPracticeNumber(input.closest('.practice-card'))}));
+    document.querySelector('#resetPractice').addEventListener('click',()=>{
+      practiceCards.forEach(card=>{delete card.dataset.complete;card.classList.remove('is-correct');card.querySelectorAll('button,input').forEach(control=>control.disabled=false);card.querySelectorAll('.practice-choice').forEach(item=>item.classList.remove('is-wrong','is-correct'));const input=card.querySelector('input');if(input)input.value='';const feedback=card.querySelector('.practice-feedback');feedback.className='practice-feedback';feedback.textContent=card.dataset.practice==='number'?(Number(card.dataset.answer)===.25?'提示：先算 KMnO₄ 莫耳數，再乘 5／2。':'提示：Br₂：I₂：S₂O₃²⁻＝1：1：2。'):'請重新選擇答案。'});updatePracticeScore();showToast('五題已重設');
+    });
     const mapData={
       oxidation:{type:'先備知識',title:'氧化數與電子轉移',summary:'先判斷誰失去電子、誰得到電子，才能辨認氧化劑與還原劑。',relation:'氧化數升高＝氧化；氧化數降低＝還原。',evidence:'MnO₄⁻ 被還原成近無色的 Mn²⁺；I₂ 被還原成無色 I⁻。',check:'SO₃²⁻ 變成 SO₄²⁻ 時，硫的氧化數如何改變？',misconception:'把含氧物種一律當成氧化劑。'},
       balance:{type:'先備知識',title:'半反應配平',summary:'用電子守恆建立可靠的反應係數，避免只靠猜係數。',relation:'酸性溶液依序配平非 H/O 原子、O、H、電荷。',evidence:'兩個半反應的電子數相等，合併後總電荷守恆。',check:'MnO₄⁻ → Mn²⁺ 每莫耳得到幾莫耳電子？',misconception:'原子數配平後就停止，忘了檢查總電荷。'},
